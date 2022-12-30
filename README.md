@@ -1,29 +1,34 @@
-# README #
+# README - Foode - Projekt Rozgrzewkowy  #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Celem projektu rozgrzewkowego jest spokojne rozpoczęcie współpracy i wdrożenie nowego pracownika w rytm pracy firmy oraz zapoznanie się z narzędziami i współpracownikami.
 
-### What is this repository for? ###
+## Foode - Serwis Kulinarny ##
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Założenia projektu: ###
 
-### How do I get set up? ###
+* prosty serwis przedstawiający przepisy kulinarne
+* serwis podzielony na część publiczną (dla wszystkich użytkowników) i część prywatną dostępną po zalogowaniu (dla administratora)
+* przepisy:
+    - pobierane przepisów z serwisu https://www.themealdb.com/api.php - synchronizacja wywoływana z linii poleceń (manualnie lub cyklicznie z CRON)
+    - dane przepisu: nazwa, krótki opis, kategoria, lista składników, opis przygotowania, zdjęcie, lista tagów
+* część publiczna (szablon w katalogu "Foode - template"):
+    - lista przepisów: wszystkie, dla kategorii, dla tagu, dla wyszukiwanej frazy, stronicowanie
+    - lista kategorii
+    - lista ostatni dodanych przepisów
+    - lista popularnych tagów
+    - szczegóły przepisu: szczegóły przepisu, lista składników, podobne przepisy (losowe z tej samej kategorii)
+* część prywatna:
+    - logowanie administratora (e-mail, hasło)
+    - tworzenie administratora - manualnie z linii poleceń (command)
+    - lista przepisów
+    - podgląd i edycja przepisu
+    - wyłączenie publikacji przepisu
+    - usuwanie przepisu z wszystkimi powiązanymi danymi
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Założenia techniczne: ###
+* PHP 8.x - framework Symfony 6.x
+* MySql 8.x
+* deploy i publikacja na serwerze - hosting MyDevil (dane dostępowe zostaną wysłane na maila)
 
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+### Czas wykonania: ###
+* ok. 5 - 6 dni roboczych lub 30 - 40h (tyle ile się uda zrobić :D)
