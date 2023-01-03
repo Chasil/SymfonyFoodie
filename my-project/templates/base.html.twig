@@ -89,8 +89,12 @@
                                     </li>
                                     <li><a href="#">About</a></li>
                                     <li><a href="#">Contact</a></li>
-                                    <li><a href="#">Login</a></li>
-                                    <li><a href="#">Logout</a></li>
+                                    {% if app.user %}
+                                        <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                                    {% else %}
+                                        <li><a href="{{ path('app_register') }}">Register</a></li>
+                                        <li><a href="{{ path('app_login') }}">Login</a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                             <!-- Nav End -->
