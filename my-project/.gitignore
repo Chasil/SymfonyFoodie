@@ -20,5 +20,3 @@
 ###< symfony/phpunit-bridge ###
 /.env
 /.env.test
-/src/DataFixtures/UserFixtures.php
-/src/DataFixtures/AppFixtures.php
