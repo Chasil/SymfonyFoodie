@@ -2,72 +2,27 @@
 
 {% block title %}Foode!{% endblock %}
 
-{% block body %}
-<div class="example-wrapper">
+{% block content %}
 
-    <header class="header-area">
-
-        <!-- Logo Area -->
-        <div class="logo-area text-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <!-- Nav brand -->
-                        <a href="#" class="nav-brand"><img src="img/core-img/logo.png" alt=""></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Navbar Area -->
-        <div class="foode-main-menu">
-            <div class="classy-nav-container breakpoint-off">
-                <div class="container">
-                    <!-- Menu -->
-                    <nav class="classy-navbar" id="foodeNav">
-
-                        <!-- Nav brand -->
-                        <a href="#" class="nav-brand"><img src="img/core-img/logo.png" alt=""></a>
-
-                        <!-- Navbar Toggler -->
-                        <div class="classy-navbar-toggler">
-                            <span class="navbarToggler"><span></span><span></span><span></span></span>
-                        </div>
-
-                        <!-- Menu -->
-                        <div class="classy-menu">
-
-                            <!-- close btn -->
-                            <div class="classycloseIcon">
-                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
-                            </div>
-
-                            <!-- Nav Start -->
-                            <div class="classynav">
-                                <ul>
-                                    <li><a href="{{ path('app_index') }}">Home</a></li>
-                                    <li><a href="#">Categories</a>
-                                        <ul class="dropdown">
-                                            <li><a href="#">Drink</a></li>
-                                            <li><a href="#">Chops</a></li>
-                                            <li><a href="#">Pasta</a></li>
-                                            <li><a href="#">Breakfast</a></li>
-                                            <li><a href="#">Tee</a></li>
-                                            <li><a href="#">Coffee</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">About</a></li>
-                                    <li><a href="#">Contact</a></li>
-                                </ul>
-                            </div>
-                            <!-- Nav End -->
-                        </div>
+    <!-- ##### Breadcrumb Area Start ##### -->
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <img src="img/core-img/breadcrumb-line.png" alt="">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#"><i class="fa fa-home"></i> Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Breakfast</li>
+                        </ol>
                     </nav>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+    <!-- ##### Breadcrumb Area End ##### -->
 
+    <!-- ##### Blog Content Area Start ##### -->
     <section class="blog-content-area section-padding-0-100">
         <div class="container">
             <div class="row justify-content-center">
@@ -300,6 +255,4 @@
             </div>
         </div>
     </section>
-
-</div>
 {% endblock %}
