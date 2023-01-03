@@ -40,6 +40,9 @@ class Recipie
     #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Tags::class)]
     private Collection $tags;
 
+    #[ORM\Column(length: 255)]
+    private ?string $photo = null;
+
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
@@ -179,6 +182,18 @@ class Recipie
                 $tag->setRecipie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(string $photo): self
+    {
+        $this->photo = $photo;
 
         return $this;
     }
