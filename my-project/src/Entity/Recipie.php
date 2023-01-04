@@ -24,20 +24,20 @@ class Recipie
     #[ORM\Column(length: 255)]
     private ?string $category = null;
 
-    #[ORM\Column(length: 1000)]
+    #[ORM\Column(length: 10000)]
     private ?string $preparation = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipies')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Ingredients::class)]
+    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Ingredients::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $ingredients;
 
     #[ORM\Column]
     private ?bool $is_visible = null;
 
-    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Tags::class)]
+    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
 
     #[ORM\Column(length: 255)]
