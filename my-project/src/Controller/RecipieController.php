@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Ingredients;
 use App\Entity\Recipie;
+use App\Entity\Tags;
 use App\Form\EditRecipieType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -39,6 +42,11 @@ class RecipieController extends AbstractController
 
         $form = $this->createForm(EditRecipieType::class, $meal);
         $form->handleRequest($request);
+
+        if($form->isSubmitted() && $this->getUser()) {
+            $meal->setName($form->get('name')->getData());
+            $doctrineManager->flush();
+        }
 
         return $this->render('recipie/edit.html.twig', [
             'edit_form' => $form->createView(),
