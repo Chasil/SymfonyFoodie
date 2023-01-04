@@ -16,25 +16,7 @@ class AddRecipieType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class)
-            ->add('description', TextType::class)
-            ->add('category', TextType::class)
-            ->add('preparation', TextType::class)
-            ->add('is_visible', CheckboxType::class, [
-                'required' => false
-            ])
-            ->add('photo', FileType::class, [
-                'label' => ' ',
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2M',
-                        'mimeTypes' => [
-                            'image/*'
-                        ],
-                        'mimeTypesMessage' => 'File must be a photo'
-                    ])
-                ]
-            ])
+            ->add('meal_link', TextType::class, ['mapped' => false])
         ;
     }
 
