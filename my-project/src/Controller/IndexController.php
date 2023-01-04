@@ -16,7 +16,7 @@ class IndexController extends AbstractController
     {
 
         $doctrineManager = $doctrine->getManager();
-        $meals = $doctrineManager->getRepository(Recipie::class)->findBy(['is_visible' => 1]);
+        $meals = $doctrineManager->getRepository(Recipie::class)->findBy(['isVisible' => 1]);
 
         return $this->render('index/index.html.twig', [
             'meals' => $meals

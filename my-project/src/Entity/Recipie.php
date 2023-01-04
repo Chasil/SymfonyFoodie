@@ -35,7 +35,7 @@ class Recipie
     private Collection $ingredients;
 
     #[ORM\Column]
-    private ?bool $is_visible = null;
+    private ?bool $isVisible = null;
 
     #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
@@ -144,14 +144,14 @@ class Recipie
         return $this;
     }
 
-    public function getIs_Visible(): ?bool
+    public function getIsVisible(): ?bool
     {
-        return $this->is_visible;
+        return $this->isVisible;
     }
 
-    public function setIsVisible(bool $is_visible): self
+    public function setIsVisible(bool $isVisible): self
     {
-        $this->is_visible = $is_visible;
+        $this->isVisible = $isVisible;
 
         return $this;
     }
