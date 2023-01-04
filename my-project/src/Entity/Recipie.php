@@ -144,7 +144,7 @@ class Recipie
         return $this;
     }
 
-    public function isIsVisible(): ?bool
+    public function getIs_Visible(): ?bool
     {
         return $this->is_visible;
     }

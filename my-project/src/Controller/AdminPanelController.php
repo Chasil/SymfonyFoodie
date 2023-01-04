@@ -17,8 +17,14 @@ class AdminPanelController extends AbstractController
     #[Route('/admin/panel', name: 'app_admin_panel')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
     {
+        if($this->getUser()) {
+            return $this->redirectToRoute('app_index');
+        }
+
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
+
+        $doctrineManager = $doctrine->getManager();
 
         if($form->isSubmitted()) {
 
@@ -30,8 +36,6 @@ class AdminPanelController extends AbstractController
                 $responseData = json_decode($jsonData);
 
                 if($responseData) {
-
-                    $doctrineManager = $doctrine->getManager();
 
                     if ($this->getUser()) {
 
@@ -85,9 +89,12 @@ class AdminPanelController extends AbstractController
             }
         }
 
+        $meals = $doctrineManager->getRepository(Recipie::class)->findAll();
+
         return $this->render('admin_panel/index.html.twig', [
             'controller_name' => 'AdminPanelController',
-            'add_recipie_form' => $form->createView()
+            'add_recipie_form' => $form->createView(),
+            'meals' => $meals
         ]);
     }
 }

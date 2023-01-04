@@ -5,17 +5,52 @@
 {% block content %}
 
 
-<div class="example-wrapper">
+    <div class="example-wrapper">
 
-    {% for message in app.flashes('notice') %}
-        <div class="alert alert-success">
-            {{ message }}
-        </div>
-    {% endfor %}
+        {% for message in app.flashes('notice') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
 
-    {{  form_start(add_recipie_form) }}
+        {{  form_start(add_recipie_form) }}
         <input type="submit" value="Save Meal" class="form-control btn btn-success w-50 align-self-center" />
-    {{  form_end(add_recipie_form) }}
+        {{  form_end(add_recipie_form) }}
 
-</div>
+        <h2>Meals List</h2>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Category</th>
+                <th scope="col">Preparation</th>
+                <th scope="col">Is visible</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for key, meal in meals %}
+                <tr>
+                    <th scope="row">{{ key+1 }}</th>
+                    <td>{{ meal.name }}</td>
+                    <td>{{ meal.description }}</td>
+                    <td>{{ meal.category }}</td>
+                    <td>{{ meal.preparation }}</td>
+                    <td>{{ meal.is_visible }}</td>
+                    <td>{{ meal.photo }}</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+
+    </div>
 {% endblock %}
