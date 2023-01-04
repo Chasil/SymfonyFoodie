@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Ingredients;
 use App\Entity\Recipie;
+use App\Entity\Tags;
 use App\Form\AddRecipieType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,36 +18,69 @@ class IndexController extends AbstractController
     #[Route('/', name: 'app_index')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
     {
+
+        $apiURL = 'https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiata';
+        $jsonData = file_get_contents($apiURL);
+        $responseData = json_decode($jsonData);
+
         $form = $this->createForm(AddRecipieType::class);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()) {
+        if($responseData) {
 
             $doctrineManager = $doctrine->getManager();
 
             if($this->getUser()) {
 
-                /** @var UploadedFile $pictureFileName */
-                $pictureFileName = $form->get('photo')->getData();
-                if($pictureFileName) {
-                    $originalFileName = pathinfo($pictureFileName->getClientOriginalName(), PATHINFO_FILENAME);
-                    $newPhotoName = $originalFileName . '_' . uniqid() . '.' . $pictureFileName->guessExtension();
-                    $pictureFileName->move('images/hosting', $newPhotoName);
+                foreach($responseData as $meals) {
+                    foreach($meals as $meal) {
 
-                    $entityRecipy = new Recipie();
-                    $entityRecipy->setName($form->get('name')->getData());
-                    $entityRecipy->setDescription($form->get('description')->getData());
-                    $entityRecipy->setPreparation($form->get('preparation')->getData());
-                    $entityRecipy->setCategory($form->get('category')->getData());
-                    $entityRecipy->setPhoto($newPhotoName);
-                    $entityRecipy->setIsVisible($form->get('is_visible')->getData());
-                    $entityRecipy->setUser($this->getUser());
+                        $entityRecipy = new Recipie();
 
-                    $doctrineManager->persist($entityRecipy);;
-                    $doctrineManager->flush();
+                        $entityRecipy->setName($meal->strMeal);
+                        $entityRecipy->setDescription("");
+                        $entityRecipy->setPreparation($meal->strInstructions);
+                        $entityRecipy->setCategory($meal->strCategory);
+                        $entityRecipy->setPhoto($meal->strMealThumb);
+                        $entityRecipy->setIsVisible(1);
+                        $entityRecipy->setUser($this->getUser());
 
-                    $this->addFlash('notice', 'Recipy added successfully');
+                        $tags = explode(",", $meal->strTags);
+
+                        foreach($tags as $tag) {
+                            $entityTags = new Tags();
+                            $tagObject = $entityTags->setName($tag);
+                            $tagObject->setRecipie($entityRecipy);
+                            $doctrineManager->persist($entityTags);
+                        }
+
+                        $ingredients = [];
+                        $maxIngredients = 20;
+
+                        for($iterateIngredients = 1; $iterateIngredients <= $maxIngredients; $iterateIngredients++) {
+                            $ingredient = $meal->{'strIngredient' . $iterateIngredients};
+                            if(($ingredient || !empty($ingredient)) && $iterateIngredients <= $maxIngredients) {
+                                $ingredients[] = $ingredient;
+                            }
+                            $iterateIngredients++;
+                        }
+
+                        foreach($ingredients as $ingredient) {
+                            $entityIngredients = new Ingredients();
+                            $ingredientObject = $entityIngredients->setName($ingredient);
+                            $ingredientObject->setRecipie($entityRecipy);
+                            $doctrineManager->persist($entityIngredients);
+                        }
+
+                        $doctrineManager->persist($entityRecipy);
+                        $doctrineManager->flush();
+
+                    }
                 }
+
+
+                $this->addFlash('notice', 'Recipy added successfully');
+
             }
         }
 

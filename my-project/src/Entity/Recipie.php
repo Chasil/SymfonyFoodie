@@ -24,7 +24,7 @@ class Recipie
     #[ORM\Column(length: 255)]
     private ?string $category = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1000)]
     private ?string $preparation = null;
 
     #[ORM\ManyToOne(inversedBy: 'recipies')]
