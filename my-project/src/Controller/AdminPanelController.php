@@ -17,7 +17,7 @@ class AdminPanelController extends AbstractController
     #[Route('/admin/panel', name: 'app_admin_panel')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
     {
-        if($this->getUser()) {
+        if(!$this->getUser()) {
             return $this->redirectToRoute('app_index');
         }
 

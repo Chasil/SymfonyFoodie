@@ -19,6 +19,12 @@
 
         <h2>Meals List</h2>
 
+        {% for message in app.flashes('deleted') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -41,10 +47,10 @@
                     <td>{{ meal.description }}</td>
                     <td>{{ meal.category }}</td>
                     <td>{{ meal.preparation }}</td>
-                    <td>{{ meal.is_visible }}</td>
+                    <td>{{ meal.isVisible }}</td>
                     <td>{{ meal.photo }}</td>
-                    <td>Edit</td>
-                    <td>Delete</td>
+                    <td><a href="{{ path('edit_recipie', {id: meal.id}) }}">Edit</a></td>
+                    <td><a href="{{ path('delete_recipie', {id: meal.id}) }}">Delete</a></td>
                 </tr>
             {% endfor %}
 
