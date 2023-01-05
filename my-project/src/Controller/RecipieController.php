@@ -45,8 +45,47 @@ class RecipieController extends AbstractController
 
         if($form->isSubmitted() && $this->getUser()) {
             $meal->setName($form->get('name')->getData());
+            $meal->setDescription($form->get('description')->getData());
+            $meal->setCategory($form->get('category')->getData());
+            $meal->setPreparation($form->get('preparation')->getData());
+            $meal->setIsVisible($form->get('isVisible')->getData());
+            $meal->setPhoto($form->get('photo')->getData());
+            $meal->setUser($this->getUser());
+
+            $tags = $doctrineManager->getRepository(Tags::class)->findBy(['recipie' => $id]);
+
+            foreach ($tags as $tag) {
+                $doctrineManager->remove($tag);
+            }
+
+            $formTags = explode(",", str_replace(' ', '', $form->get('tags')->getData()));
+
+            foreach($formTags as $tag) {
+                $entityTags = new Tags();
+                $tagObject = $entityTags->setName($tag);
+                $tagObject->setRecipie($meal);
+                $doctrineManager->persist($entityTags);
+            }
+
+            $ingredients = $doctrineManager->getRepository(Ingredients::class)->findBy(['recipie' => $id]);
+
+            foreach($ingredients as $ingredient) {
+                $doctrineManager->remove($ingredient);
+            }
+
+            $formIngredients = explode(",", str_replace(' ', '', $form->get('ingredients')->getData()));
+
+            foreach($formIngredients as $ingredient) {
+                $entityIngredients = new Ingredients();
+                $ingredientObject = $entityIngredients->setName($ingredient);
+                $ingredientObject->setRecipie($meal);
+                $doctrineManager->persist($entityIngredients);
+            }
+
             $doctrineManager->flush();
         }
+
+        $meal = $doctrineManager->getRepository(Recipie::class)->find($id);
 
         return $this->render('recipie/edit.html.twig', [
             'edit_form' => $form->createView(),
