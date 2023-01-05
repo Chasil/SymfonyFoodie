@@ -10,23 +10,42 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class RecipieController extends AbstractController
 {
     #[Route('/recipie/{id}', name: 'recipie')]
-    public function index() {
+    public function index(int $id, ManagerRegistry $doctrine): Response {
 
+        if(!$this->getUser()) {
+            return $this->redirectToRoute('app_index');
+        }
+
+        $doctrineManager = $doctrine->getManager();
+        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
+        $tags = $doctrineManager->getRepository(Tags::class)->findBy(['recipie' => $id]);
+        $ingredients = $doctrineManager->getRepository(Ingredients::class)->findBy(['recipie' => $id]);
+
+        return $this->render('recipie/recipie.html.twig', [
+            'recipie' => $recipie,
+            'tags' => $tags,
+            'ingredients' => $ingredients
+        ]);
     }
 
     #[Route('/recipie/delete/{id}', name: 'delete_recipie')]
     public function delete(int $id, ManagerRegistry $doctrine) {
 
-        $doctrineManager = $doctrine->getManager();
-        $meal = $doctrineManager->getRepository(Recipie::class)->find($id);
+        if(!$this->getUser()) {
+            return $this->redirectToRoute('app_index');
+        }
 
-        if($this->getUser() == $meal->getUser()) {
-            $doctrineManager->remove($meal);
+        $doctrineManager = $doctrine->getManager();
+        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
+
+        if($this->getUser() == $recipie->getUser()) {
+            $doctrineManager->remove($recipie);
             $doctrineManager->flush();
             $this->addFlash('deleted', 'Deleted successfully');
         }
@@ -35,22 +54,26 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'edit_recipie')]
-    public function edit(int $id, ManagerRegistry $doctrine, Request $request) {
+    public function edit(int $id, ManagerRegistry $doctrine, Request $request): Response {
+
+        if(!$this->getUser()) {
+            return $this->redirectToRoute('app_index');
+        }
 
         $doctrineManager = $doctrine->getManager();
-        $meal = $doctrineManager->getRepository(Recipie::class)->find($id);
+        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
 
-        $form = $this->createForm(EditRecipieType::class, $meal);
+        $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $this->getUser()) {
-            $meal->setName($form->get('name')->getData());
-            $meal->setDescription($form->get('description')->getData());
-            $meal->setCategory($form->get('category')->getData());
-            $meal->setPreparation($form->get('preparation')->getData());
-            $meal->setIsVisible($form->get('isVisible')->getData());
-            $meal->setPhoto($form->get('photo')->getData());
-            $meal->setUser($this->getUser());
+            $recipie->setName($form->get('name')->getData());
+            $recipie->setDescription($form->get('description')->getData());
+            $recipie->setCategory($form->get('category')->getData());
+            $recipie->setPreparation($form->get('preparation')->getData());
+            $recipie->setIsVisible($form->get('isVisible')->getData());
+            $recipie->setPhoto($form->get('photo')->getData());
+            $recipie->setUser($this->getUser());
 
             $tags = $doctrineManager->getRepository(Tags::class)->findBy(['recipie' => $id]);
 
@@ -63,7 +86,7 @@ class RecipieController extends AbstractController
             foreach($formTags as $tag) {
                 $entityTags = new Tags();
                 $tagObject = $entityTags->setName($tag);
-                $tagObject->setRecipie($meal);
+                $tagObject->setRecipie($recipie);
                 $doctrineManager->persist($entityTags);
             }
 
@@ -78,18 +101,18 @@ class RecipieController extends AbstractController
             foreach($formIngredients as $ingredient) {
                 $entityIngredients = new Ingredients();
                 $ingredientObject = $entityIngredients->setName($ingredient);
-                $ingredientObject->setRecipie($meal);
+                $ingredientObject->setRecipie($recipie);
                 $doctrineManager->persist($entityIngredients);
             }
 
             $doctrineManager->flush();
         }
 
-        $meal = $doctrineManager->getRepository(Recipie::class)->find($id);
+        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
 
         return $this->render('recipie/edit.html.twig', [
             'edit_form' => $form->createView(),
-            'meal' => $meal
+            'meal' => $recipie
         ]);
     }
 
