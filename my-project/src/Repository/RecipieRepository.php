@@ -39,6 +39,13 @@ class RecipieRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllCategories(): array {
+        return $this->createQueryBuilder('r')
+            ->select('r.category')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Recipie[] Returns an array of Recipie objects
 //     */
