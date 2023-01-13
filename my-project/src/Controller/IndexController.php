@@ -16,10 +16,10 @@ class IndexController extends AbstractController
     {
 
         $doctrineManager = $doctrine->getManager();
-        $meals = $doctrineManager->getRepository(Recipie::class)->findBy(['isVisible' => 1]);
+        $recipies = $doctrineManager->getRepository(Recipie::class)->findBy(['isVisible' => 1]);
 
         return $this->render('index/index.html.twig', [
-            'meals' => $meals
+            'recipies' => $recipies
         ]);
     }
 }

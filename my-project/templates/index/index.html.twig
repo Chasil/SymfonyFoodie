@@ -30,21 +30,21 @@
                 <div class="col-12 col-lg-8">
                     <div class="blog-posts-area">
 
-                        {% for meal in meals %}
+                        {% for recipy in recipies %}
                         <!-- Single Blog Post -->
                         <div class="single-blog-post d-flex flex-wrap mt-50">
                             <!-- Thumbnail -->
                             <div class="post-thumbnail mb-50">
-                                <a href="recipe.html"><img src="{{ meal.photo }}" alt=""></a>
+                                <a href="recipe.html"><img src="{{ recipie.photo }}" alt=""></a>
                             </div>
                             <!-- Content -->
                             <div class="post-content mb-50">
                                 <p class="post-date">MAY 8, 2018 / foody</p>
-                                <a href="{{ path('recipie', {id: meal.id}) }}" class="post-title">
-                                    <h4>{{ meal.name }}</h4>
+                                <a href="{{ path('recipie', {id: recipie.id}) }}" class="post-title">
+                                    <h4>{{ recipie.name }}</h4>
                                 </a>
-                                <p class="post-excerpt">{{ meal.preparation }}</p>
-                                <a href="{{ path('recipie', {id: meal.id}) }}" class="read-more-btn">Continue Reading <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
+                                <p class="post-excerpt">{{ recipie.preparation }}</p>
+                                <a href="{{ path('recipie', {id: recipie.id}) }}" class="read-more-btn">Continue Reading <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                             </div>
                             <!-- Post Curve Line -->
                             <img class="post-curve-line" src="{{ asset('assets/img/core-img/post-curve-line.png') }}" alt="">
