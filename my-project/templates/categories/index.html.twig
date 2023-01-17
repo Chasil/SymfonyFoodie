@@ -14,7 +14,7 @@
     Categories:
     <ul>
         {% for category in categories %}
-            <li><a href="{{ path('category', {name: category.category}) }}">{{ category.category }}</a></li>
+            <li><a href="{{ path('category', {category: category.category}) }}">{{ category.category }}</a></li>
         {% endfor %}
     </ul>
 </div>
