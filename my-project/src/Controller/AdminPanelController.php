@@ -57,7 +57,7 @@ class AdminPanelController extends AbstractController
                                 foreach ($tags as $tag) {
                                     $entityTags = new Tags();
                                     $tagObject = $entityTags->setName($tag);
-                                    $tagObject->setRecipie($entityRecipy);
+                                    $tagObject->addRecipie($entityRecipy);
                                     $doctrineManager->persist($entityTags);
                                 }
 

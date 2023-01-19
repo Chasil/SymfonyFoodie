@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TagsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TagsRepository::class)]
@@ -16,8 +18,14 @@ class Tags
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tags')]
-    private ?Recipie $recipie = null;
+
+    #[ORM\ManyToMany(targetEntity: Recipie::class, mappedBy: 'tags')]
+    private Collection $recipies;
+
+    public function __construct()
+    {
+        $this->recipies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -36,14 +44,29 @@ class Tags
         return $this;
     }
 
-    public function getRecipie(): ?Recipie
+    /**
+     * @return Collection<int, Recipie>
+     */
+    public function getRecipies(): Collection
     {
-        return $this->recipie;
+        return $this->recipies;
     }
 
-    public function setRecipie(?Recipie $recipie): self
+    public function addRecipie(Recipie $recipie): self
     {
-        $this->recipie = $recipie;
+        if (!$this->recipies->contains($recipie)) {
+            $this->recipies->add($recipie);
+            $recipie->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecipie(Recipie $recipie): self
+    {
+        if ($this->recipies->removeElement($recipie)) {
+            $recipie->removeTag($this);
+        }
 
         return $this;
     }

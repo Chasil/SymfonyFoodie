@@ -37,7 +37,7 @@ class Recipie
     #[ORM\Column]
     private ?bool $isVisible = null;
 
-    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
 
     #[ORM\Column(length: 255)]
@@ -164,24 +164,18 @@ class Recipie
         return $this->tags;
     }
 
-    public function addTag(Tags $tag): self
+    public function addTag(tags $tag): self
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
-            $tag->setRecipie($this);
         }
 
         return $this;
     }
 
-    public function removeTag(Tags $tag): self
+    public function removeTag(tags $tag): self
     {
-        if ($this->tags->removeElement($tag)) {
-            // set the owning side to null (unless already changed)
-            if ($tag->getRecipie() === $this) {
-                $tag->setRecipie(null);
-            }
-        }
+        $this->tags->removeElement($tag);
 
         return $this;
     }
