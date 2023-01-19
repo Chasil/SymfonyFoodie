@@ -23,9 +23,10 @@ class RecipieController extends AbstractController
         }
 
         $doctrineManager = $doctrine->getManager();
+        /** @var Recipie $recipie */
         $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
-        $tags = $doctrineManager->getRepository(Tags::class)->findBy(['recipie' => $id]);
-        $ingredients = $doctrineManager->getRepository(Ingredients::class)->findBy(['recipie' => $id]);
+        $tags = $recipie->getTags()->getValues();
+        $ingredients = $recipie->getIngredients()->getValues();
 
         return $this->render('recipie/recipie.html.twig', [
             'recipie' => $recipie,

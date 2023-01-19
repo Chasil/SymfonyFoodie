@@ -165,7 +165,7 @@
                             <!-- Tags -->
                             <ol class="popular-tags d-flex flex-wrap">
                                 {%  for tag in tags %}
-                                    <li><a href="#">{{ tag.name }}</a></li>
+                                    <li><a href="{{ path('tag', {tag: tag.name}) }}">{{ tag.name }}</a></li>
                                 {% endfor %}
                             </ol>
                         </div>
