@@ -34,3 +34,10 @@ Celem projektu rozgrzewkowego jest spokojne rozpoczęcie współpracy i wdrożen
 
 ### Czas wykonania: ###
 * ok. 5 - 6 dni roboczych lub 30 - 40h (tyle ile się uda zrobić :D)
+
+### Przykłady ###
+* W panelu admina można sobie zaimportować po API przepisy np.:
+* https://www.themealdb.com/api/json/v1/1/search.php?s=Sushi
+* https://www.themealdb.com/api/json/v1/1/search.php?s=Pad See Ew
+* https://www.themealdb.com/api/json/v1/1/search.php?s=Burek
+* https://www.themealdb.com/api/json/v1/1/search.php?s=Flamiche
