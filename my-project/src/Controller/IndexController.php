@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     #[Route('/', name: 'app_index')]
-    public function index(Request $request, ManagerRegistry $doctrine): Response
+    public function index(ManagerRegistry $doctrine): Response
     {
 
         $doctrineManager = $doctrine->getManager();
