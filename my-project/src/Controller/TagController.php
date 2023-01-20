@@ -22,6 +22,8 @@ class TagController extends AbstractController
 
         return $this->render('tag/index.html.twig', [
             'controller_name' => 'TagController',
+            'recipies' => $recipies,
+            'tag_name' => $tagName
         ]);
     }
 }

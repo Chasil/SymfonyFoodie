@@ -17,9 +17,11 @@ class IndexController extends AbstractController
     {
 
         $doctrineManager = $doctrine->getManager();
+        /** @var Recipie $recipies */
         $recipies = $doctrineManager->getRepository(Recipie::class)->findBy(['isVisible' => 1]);
+        // co do kategorii to w sumie źle do tego podszedłem, trzeba by zrobić to na zasadzie tagów ale nie dam rady dziś zmienić
         $categories = $doctrineManager->getRepository(Recipie::class)->findGroupedCategories();
-        $tags = $doctrineManager->getRepository(Tags::class)->getGrouped();
+        $tags = $doctrineManager->getRepository(Tags::class)->findAll();
 
         return $this->render('index/index.html.twig', [
             'recipies' => $recipies,
