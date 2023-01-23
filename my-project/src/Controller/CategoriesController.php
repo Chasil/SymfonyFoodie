@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoriesController extends AbstractController
 {
-    #[Route('/categories', name: 'app_categories')]
+    #[Route('/categories', name: 'categories')]
     public function index(ManagerRegistry $doctrine): Response
     {
         $doctrineManager = $doctrine->getManager();

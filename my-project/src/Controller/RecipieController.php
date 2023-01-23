@@ -19,7 +19,7 @@ class RecipieController extends AbstractController
     public function index(int $id, ManagerRegistry $doctrine): Response {
 
         if(!$this->getUser()) {
-            return $this->redirectToRoute('app_index');
+            return $this->redirectToRoute('index');
         }
 
         $doctrineManager = $doctrine->getManager();
@@ -39,7 +39,7 @@ class RecipieController extends AbstractController
     public function delete(int $id, ManagerRegistry $doctrine) {
 
         if(!$this->getUser()) {
-            return $this->redirectToRoute('app_index');
+            return $this->redirectToRoute('index');
         }
 
         $doctrineManager = $doctrine->getManager();
@@ -51,14 +51,14 @@ class RecipieController extends AbstractController
             $this->addFlash('deleted', 'Deleted successfully');
         }
 
-        return $this->redirectToRoute('app_admin_panel');
+        return $this->redirectToRoute('admin_panel');
     }
 
     #[Route('/recipie/edit/{id}', name: 'edit_recipie')]
     public function edit(int $id, ManagerRegistry $doctrine, Request $request): Response {
 
         if(!$this->getUser()) {
-            return $this->redirectToRoute('app_index');
+            return $this->redirectToRoute('index');
         }
 
         $doctrineManager = $doctrine->getManager();

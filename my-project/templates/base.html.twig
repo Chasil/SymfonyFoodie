@@ -77,8 +77,8 @@
                             <!-- Nav Start -->
                             <div class="classynav">
                                 <ul>
-                                    <li><a href="{{ path('app_index') }}">Home</a></li>
-                                    <li><a href="{{ path('app_categories') }}">Categories</a>
+                                    <li><a href="{{ path('index') }}">Home</a></li>
+                                    <li><a href="{{ path('categories') }}">Categories</a>
                                         <ul class="dropdown">
                                             <li><a href="#">Drink</a></li>
                                             <li><a href="#">Chops</a></li>
@@ -91,11 +91,11 @@
                                     <li><a href="#">About</a></li>
                                     <li><a href="#">Contact</a></li>
                                     {% if app.user %}
-                                        <li><a href="{{ path('app_admin_panel') }}">Panel</a></li>
+                                        <li><a href="{{ path('admin_panel') }}">Panel</a></li>
                                         <li><a href="{{ path('app_logout') }}">Logout</a></li>
                                     {% else %}
                                         <li><a href="{{ path('app_register') }}">Register</a></li>
-                                        <li><a href="{{ path('app_login') }}">Login</a></li>
+                                        <li><a href="{{ path('login') }}">Login</a></li>
                                     {% endif %}
                                 </ul>
                             </div>

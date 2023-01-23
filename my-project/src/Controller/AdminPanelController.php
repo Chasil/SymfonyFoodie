@@ -14,11 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdminPanelController extends AbstractController
 {
-    #[Route('/admin/panel', name: 'app_admin_panel')]
+    #[Route('/admin/panel', name: 'admin_panel')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
     {
         if(!$this->getUser()) {
-            return $this->redirectToRoute('app_index');
+            return $this->redirectToRoute('index');
         }
 
         $form = $this->createForm(AddRecipieType::class);
