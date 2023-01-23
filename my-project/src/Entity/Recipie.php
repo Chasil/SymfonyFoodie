@@ -21,9 +21,6 @@ class Recipie
     #[ORM\Column(length: 1000)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $category = null;
-
     #[ORM\Column(length: 10000)]
     private ?string $preparation = null;
 
@@ -40,13 +37,20 @@ class Recipie
     #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
 
+    #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Category::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $category;
+
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
+
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'recipie')]
+    private Collection $categories;
 
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,18 +78,6 @@ class Recipie
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getCategory(): ?string
-    {
-        return $this->category;
-    }
-
-    public function setCategory(string $category): self
-    {
-        $this->category = $category;
 
         return $this;
     }
@@ -180,6 +172,30 @@ class Recipie
         return $this;
     }
 
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategory(): Collection
+    {
+        return $this->category;
+    }
+
+    public function addCategory(category $category): self
+    {
+        if (!$this->category->contains($category)) {
+            $this->category->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(category $category): self
+    {
+        $this->category->removeElement($category);
+
+        return $this;
+    }
+
     public function getPhoto(): ?string
     {
         return $this->photo;
@@ -190,5 +206,13 @@ class Recipie
         $this->photo = $photo;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
     }
 }

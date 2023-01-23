@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Category;
 use App\Entity\Ingredients;
 use App\Entity\Recipie;
 use App\Entity\Tags;
@@ -62,6 +63,21 @@ class RecipieController extends AbstractController
             $recipie->setIsVisible($form->get('isVisible')->getData());
             $recipie->setPhoto($form->get('photo')->getData());
             $recipie->setUser($this->getUser());
+
+            $categories = $doctrineManager->getRepository(Category::class)->findBy(['name' => $id]);
+
+            foreach ($categories as $category) {
+                $doctrineManager->remove($category);
+            }
+
+            $formCategories = explode(",", str_replace(' ', '', $form->get('category')->getData()));
+
+            foreach($formCategories as $category) {
+                $entityCategory = new Category();
+                $categoryObject = $entityCategory->setName($category);
+                $categoryObject->addRecipie($recipie);
+                $doctrineManager->persist($entityCategory);
+            }
 
             $tags = $doctrineManager->getRepository(Tags::class)->findBy(['name' => $id]);
 

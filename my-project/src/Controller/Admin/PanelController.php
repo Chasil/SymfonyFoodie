@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Ingredients;
 use App\Entity\Recipie;
 use App\Entity\Tags;
+use App\Entity\Category;
 use App\Form\AddRecipieType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,10 +48,14 @@ class PanelController extends AbstractController
                                 $entityRecipy->setName($meal->strMeal);
                                 $entityRecipy->setDescription("");
                                 $entityRecipy->setPreparation($meal->strInstructions);
-                                $entityRecipy->setCategory($meal->strCategory);
                                 $entityRecipy->setPhoto($meal->strMealThumb);
                                 $entityRecipy->setIsVisible(1);
                                 $entityRecipy->setUser($this->getUser());
+
+                                $entityCategory = new Category();
+                                $categoryObjet = $entityCategory->setName($meal->strCategory);
+                                $categoryObjet->addRecipie($entityRecipy);
+                                $doctrineManager->persist($entityCategory);;
 
                                 $tags = explode(",", $meal->strTags);
 
