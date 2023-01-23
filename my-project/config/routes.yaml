@@ -1,6 +1,12 @@
-controllers:
+site_controllers:
     resource: ../src/Controller/
     type: annotation
+
+admin_controllers:
+    resource: ../src/Controller/Admin
+    type: annotation
+    prefix: /admin
+    trailing_slash_on_root: false
 
 kernel:
     resource: ../src/Kernel.php

@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RecipieController extends AbstractController
 {
-    #[Route('/admin/recipie', name: 'admin_recipie')]
+    #[Route('/recipie', name: 'admin_recipie')]
     public function index(): Response
     {
         return $this->render('admin/recipie/index.html.twig', [

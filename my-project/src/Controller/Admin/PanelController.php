@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PanelController extends AbstractController
 {
-    #[Route('/admin/panel', name: 'admin_panel')]
+    #[Route('/panel', name: 'admin_panel')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
     {
         if(!$this->getUser()) {
