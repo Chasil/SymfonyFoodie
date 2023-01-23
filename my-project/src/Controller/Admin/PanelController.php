@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Ingredients;
 use App\Entity\Recipie;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminPanelController extends AbstractController
+class PanelController extends AbstractController
 {
     #[Route('/admin/panel', name: 'admin_panel')]
     public function index(Request $request, ManagerRegistry $doctrine): Response
@@ -92,7 +92,7 @@ class AdminPanelController extends AbstractController
         $meals = $doctrineManager->getRepository(Recipie::class)->findAll();
 
         return $this->render('admin_panel/index.html.twig', [
-            'controller_name' => 'AdminPanelController',
+            'controller_name' => 'PanelController',
             'add_recipie_form' => $form->createView(),
             'meals' => $meals
         ]);

@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Controller\AdminPanelController;
+use App\Controller\Admin\PanelController;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,7 +20,7 @@ class AddRecipieType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => AdminPanelController::class,
+            'data_class' => PanelController::class,
         ]);
     }
 }
