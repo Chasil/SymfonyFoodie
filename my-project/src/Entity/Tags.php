@@ -18,7 +18,6 @@ class Tags
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-
     #[ORM\ManyToMany(targetEntity: Recipie::class, mappedBy: 'tags')]
     private Collection $recipies;
 

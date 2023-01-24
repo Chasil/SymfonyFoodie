@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Category;
+use App\Entity\Recipie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,24 @@ class CategoryRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @param string $name
+     * @param Recipie $recipie
+     * @return void
+     */
+    public function addCategory(string $name, Recipie $recipie): void
+    {
+        $category = $this->getEntityManager()->getRepository(Category::class)->findOneBy(['name' => $name]);
+
+        if(!$category) {
+            $category = new Category();
+            $category->setName($name);
+        }
+        $category->addRecipie($recipie);
+        $this->getEntityManager()->persist($category);
+        $this->getEntityManager()->flush();
     }
 
 //    /**

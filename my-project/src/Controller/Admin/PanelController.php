@@ -52,10 +52,7 @@ class PanelController extends AbstractController
                                 $entityRecipy->setIsVisible(1);
                                 $entityRecipy->setUser($this->getUser());
 
-                                $entityCategory = new Category();
-                                $categoryObjet = $entityCategory->setName($meal->strCategory);
-                                $categoryObjet->addRecipie($entityRecipy);
-                                $doctrineManager->persist($entityCategory);;
+                                $doctrineManager->getRepository(Category::class)->addCategory($meal->strCategory, $entityRecipy);
 
                                 $tags = explode(",", $meal->strTags);
 
@@ -72,16 +69,18 @@ class PanelController extends AbstractController
                                 for ($iterateIngredients = 1; $iterateIngredients <= $maxIngredients; $iterateIngredients++) {
                                     $ingredient = $meal->{'strIngredient' . $iterateIngredients};
                                     if (($ingredient || !empty($ingredient)) && $iterateIngredients <= $maxIngredients) {
-                                        $ingredients[] = $ingredient;
+                                        $ingredients[$iterateIngredients]['name'] = $ingredient;
+                                        $ingredients[$iterateIngredients]['measure'] = $meal->{'strMeasure' . $iterateIngredients};
                                     }
                                     $iterateIngredients++;
                                 }
 
                                 foreach ($ingredients as $ingredient) {
-                                    $entityIngredients = new Ingredients();
-                                    $ingredientObject = $entityIngredients->setName($ingredient);
-                                    $ingredientObject->setRecipie($entityRecipy);
-                                    $doctrineManager->persist($entityIngredients);
+                                    $entityIngredient = new Ingredients();
+                                    $entityIngredient->setName($ingredient['name']);
+                                    $entityIngredient->setMeasure($ingredient['measure']);
+                                    $entityIngredient->setRecipie($entityRecipy);
+                                    $doctrineManager->persist($entityIngredient);
                                 }
 
                                 $doctrineManager->persist($entityRecipy);

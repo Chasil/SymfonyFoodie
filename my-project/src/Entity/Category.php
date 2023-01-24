@@ -15,10 +15,10 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Recipie::class, inversedBy: 'categories')]
+    #[ORM\ManyToMany(targetEntity: Recipie::class, mappedBy: 'category')]
     private Collection $recipie;
 
     public function __construct()

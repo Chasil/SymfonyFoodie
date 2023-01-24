@@ -43,9 +43,6 @@ class Recipie
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
 
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'recipie')]
-    private Collection $categories;
-
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
@@ -206,13 +203,5 @@ class Recipie
         $this->photo = $photo;
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Category>
-     */
-    public function getCategories(): Collection
-    {
-        return $this->categories;
     }
 }

@@ -16,6 +16,9 @@ class Ingredients
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $measure = null;
+
     #[ORM\ManyToOne(inversedBy: 'ingredients')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Recipie $recipie = null;
@@ -33,6 +36,18 @@ class Ingredients
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getMeasure(): ?string
+    {
+        return $this->measure;
+    }
+
+    public function setMeasure(string $measure): self
+    {
+        $this->measure = $measure;
 
         return $this;
     }
