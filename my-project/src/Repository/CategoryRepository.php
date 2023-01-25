@@ -55,7 +55,6 @@ class CategoryRepository extends ServiceEntityRepository
         }
         $category->addRecipie($recipie);
         $this->getEntityManager()->persist($category);
-        $this->getEntityManager()->flush();
     }
 
 //    /**

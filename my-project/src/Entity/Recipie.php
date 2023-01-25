@@ -47,7 +47,7 @@ class Recipie
     {
         $this->ingredients = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->categories = new ArrayCollection();
+        $this->category = new ArrayCollection();
     }
 
     public function getId(): ?int
