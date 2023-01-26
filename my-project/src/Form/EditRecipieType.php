@@ -14,6 +14,13 @@ class EditRecipieType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
+        $categoriesValues = $options['data']->getCategory()->getValues();
+
+        $categories = [];
+        foreach($categoriesValues as $categoriesValue) {
+            $categories[] = $categoriesValue->getName();
+        }
+
         $tagsValues = $options['data']->getTags()->getValues();
 
         $tags = [];
@@ -31,7 +38,7 @@ class EditRecipieType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
-            ->add('category')
+            ->add('category', TextType::class, ['mapped' => false, 'data' => implode(",", $categories)])
             ->add('preparation')
             ->add('isVisible')
             ->add('photo')
