@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Recipie;
 use App\Entity\Tags;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -37,6 +38,23 @@ class TagsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @param string $name
+     * @param Recipie $recipie
+     * @return void
+     */
+    public function addTag(string $name, Recipie $recipie): void
+    {
+        $tag = $this->getEntityManager()->getRepository(Tags::class)->findOneBy(['name' => $name]);
+
+        if(!$tag) {
+            $tag = new Tags();
+            $tag->setName($name);
+        }
+        $tag->addRecipie($recipie);
+        $this->getEntityManager()->persist($tag);
     }
 
     /**

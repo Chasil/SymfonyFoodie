@@ -36,7 +36,7 @@ class EditRecipieType extends AbstractType
         }
 
         $builder
-            ->add('name')
+            ->add('name', TextType::class, ['attr' => ['maxlength' => 255]])
             ->add('description')
             ->add('category', TextType::class, ['mapped' => false, 'data' => implode(",", $categories)])
             ->add('preparation')

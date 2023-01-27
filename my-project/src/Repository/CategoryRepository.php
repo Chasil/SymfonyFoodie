@@ -42,19 +42,18 @@ class CategoryRepository extends ServiceEntityRepository
 
     /**
      * @param string $name
-     * @param Recipie $recipie
-     * @return void
+     * @return Category
      */
-    public function addCategory(string $name, Recipie $recipie): void
+    public function getCategoryByName(string $name): Category
     {
-        $category = $this->getEntityManager()->getRepository(Category::class)->findOneBy(['name' => $name]);
+        $category = $this->findOneBy(['name' => $name]);
 
         if(!$category) {
             $category = new Category();
             $category->setName($name);
+            $this->getEntityManager()->persist($category);
         }
-        $category->addRecipie($recipie);
-        $this->getEntityManager()->persist($category);
+        return $category;
     }
 
 //    /**

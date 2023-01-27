@@ -50,33 +50,42 @@ class RecipieController extends AbstractController
         }
 
         $doctrineManager = $doctrine->getManager();
+
+        /** @var Recipie $recipie */
         $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
 
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $this->getUser()) {
+//            $recipieCreator = new RecipieCreator();
+//            $recipieCreator->create([
+//                'name' => $form->get('name')->getData(),
+//            ]);
             $recipie->setName($form->get('name')->getData());
             $recipie->setDescription($form->get('description')->getData());
-            $recipie->setCategory($form->get('category')->getData());
             $recipie->setPreparation($form->get('preparation')->getData());
             $recipie->setIsVisible($form->get('isVisible')->getData());
             $recipie->setPhoto($form->get('photo')->getData());
             $recipie->setUser($this->getUser());
 
-            $categories = $doctrineManager->getRepository(Category::class)->findBy(['name' => $id]);
-
-            foreach ($categories as $category) {
-                $doctrineManager->remove($category);
+            $formCategories = array_map(
+                'trim',
+                explode(",", $form->get('category')->getData())
+            );
+            $recipeCategories = $recipie->getCategory();
+            foreach ($recipeCategories as $recipeCategory) {
+                $name = $recipeCategory->getName();
+                if (!in_array($name, $formCategories)) {
+                    $recipie->removeCategory($recipeCategory);
+                }
             }
 
-            $formCategories = explode(",", str_replace(' ', '', $form->get('category')->getData()));
-
-            foreach($formCategories as $category) {
-                $entityCategory = new Category();
-                $categoryObject = $entityCategory->setName($category);
-                $categoryObject->addRecipie($recipie);
-                $doctrineManager->persist($entityCategory);
+            foreach($formCategories as $formCategory) {
+                /** @var CategoryRepository $categoryRepository */
+                $categoryRepository = $doctrineManager->getRepository(Category::class);
+                $category = $categoryRepository->getCategoryByName($formCategory);
+                $recipie->addCategory($category);
             }
 
             $tags = $doctrineManager->getRepository(Tags::class)->findBy(['name' => $id]);
@@ -105,10 +114,12 @@ class RecipieController extends AbstractController
             foreach($formIngredients as $ingredient) {
                 $entityIngredients = new Ingredients();
                 $ingredientObject = $entityIngredients->setName($ingredient);
+                $entityIngredients->setMeasure('asd');
                 $ingredientObject->setRecipie($recipie);
                 $doctrineManager->persist($entityIngredients);
             }
 
+            $doctrineManager->persist($recipie);
             $doctrineManager->flush();
         }
 

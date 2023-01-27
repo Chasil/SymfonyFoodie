@@ -37,7 +37,7 @@ class Recipie
     #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
 
-    #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Category::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Category::class, cascade: ['persist'], orphanRemoval: false)]
     private Collection $category;
 
     #[ORM\Column(length: 255)]
@@ -175,6 +175,16 @@ class Recipie
     public function getCategory(): Collection
     {
         return $this->category;
+    }
+
+    /**
+     * @param Collection<int, Category> $categories
+     * @return $this
+     */
+    public function setCategory(Collection $categories): self
+    {
+        $this->category = $categories;
+        return $this;
     }
 
     public function addCategory(category $category): self

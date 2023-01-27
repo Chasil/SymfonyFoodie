@@ -7,6 +7,7 @@ use App\Entity\Recipie;
 use App\Entity\Tags;
 use App\Entity\Category;
 use App\Form\AddRecipieType;
+use App\Repository\CategoryRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,90 +16,96 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PanelController extends AbstractController
 {
-    #[Route('/panel', name: 'admin_panel')]
-    public function index(Request $request, ManagerRegistry $doctrine): Response
+    #[Route('/panel', name: 'admin_panel', methods: ['GET'])]
+    public function index(ManagerRegistry $doctrine): Response
     {
         if(!$this->getUser()) {
             return $this->redirectToRoute('index');
         }
 
         $form = $this->createForm(AddRecipieType::class);
-        $form->handleRequest($request);
 
         $doctrineManager = $doctrine->getManager();
 
-        if($form->isSubmitted()) {
+        return $this->render('admin_panel/index.html.twig', [
+            'add_recipie_form' => $form->createView(),
+            'meals' => $doctrineManager->getRepository(Recipie::class)->findAll()
+        ]);
+    }
 
-            $apiURL = $form->get('meal_link')->getData();
+    #[Route('/panel', name: 'save', methods: ['POST'])]
+    public function saveRecipie(Request $request, ManagerRegistry $doctrine): Response {
 
-            if($apiURL) {
+        $form = $this->createForm(AddRecipieType::class);
+        $form->handleRequest($request);
+        $apiURL = $form->get('meal_link')->getData();
+        $doctrineManager = $doctrine->getManager();
 
-                $jsonData = file_get_contents($apiURL);
-                $responseData = json_decode($jsonData);
+        if($apiURL) {
 
-                if($responseData) {
+            $jsonData = file_get_contents($apiURL);
+            $responseData = json_decode($jsonData);
 
-                    if ($this->getUser()) {
+            if($responseData) {
 
-                        foreach ($responseData as $meals) {
-                            foreach ($meals as $meal) {
+                if ($this->getUser()) {
 
-                                $entityRecipy = new Recipie();
+                    foreach ($responseData as $meals) {
+                        foreach ($meals as $meal) {
 
-                                $entityRecipy->setName($meal->strMeal);
-                                $entityRecipy->setDescription("");
-                                $entityRecipy->setPreparation($meal->strInstructions);
-                                $entityRecipy->setPhoto($meal->strMealThumb);
-                                $entityRecipy->setIsVisible(1);
-                                $entityRecipy->setUser($this->getUser());
+//                            $recipieCreator = new RecipieCreator();
+//                            $recipieCreator->create([
+//                                'name' => $meal->strMeal,
+//                            ]);
+                            $entityRecipy = new Recipie();
 
-                                $doctrineManager->getRepository(Category::class)->addCategory($meal->strCategory, $entityRecipy);
+                            $entityRecipy->setName($meal->strMeal);
+                            $entityRecipy->setDescription("");
+                            $entityRecipy->setPreparation($meal->strInstructions);
+                            $entityRecipy->setPhoto($meal->strMealThumb);
+                            $entityRecipy->setIsVisible(1);
+                            $entityRecipy->setUser($this->getUser());
 
-                                $tags = explode(",", $meal->strTags);
+                            /** @var CategoryRepository $categoryRepository */
+                            $categoryRepository = $doctrineManager->getRepository(Category::class);
+                            $category = $categoryRepository->getCategoryByName($meal->strCategory);
+                            $entityRecipy->addCategory($category);
 
-                                foreach ($tags as $tag) {
-                                    $entityTags = new Tags();
-                                    $tagObject = $entityTags->setName($tag);
-                                    $tagObject->addRecipie($entityRecipy);
-                                    $doctrineManager->persist($entityTags);
-                                }
+                            $tags = explode(",", $meal->strTags);
 
-                                $ingredients = [];
-                                $maxIngredients = 20;
-
-                                for ($iterateIngredients = 1; $iterateIngredients <= $maxIngredients; $iterateIngredients++) {
-                                    $ingredient = $meal->{'strIngredient' . $iterateIngredients};
-                                    if (($ingredient || !empty($ingredient)) && $iterateIngredients <= $maxIngredients) {
-                                        $ingredients[$iterateIngredients]['name'] = $ingredient;
-                                        $ingredients[$iterateIngredients]['measure'] = $meal->{'strMeasure' . $iterateIngredients};
-                                    }
-                                    $iterateIngredients++;
-                                }
-
-                                foreach ($ingredients as $ingredient) {
-                                    $entityIngredient = new Ingredients();
-                                    $entityIngredient->setName($ingredient['name']);
-                                    $entityIngredient->setMeasure($ingredient['measure']);
-                                    $entityIngredient->setRecipie($entityRecipy);
-                                    $doctrineManager->persist($entityIngredient);
-                                }
-
-                                $doctrineManager->persist($entityRecipy);
-                                $doctrineManager->flush();
+                            foreach ($tags as $tag) {
+                                $doctrineManager->getRepository(Tags::class)->addTag($tag, $entityRecipy);
                             }
+
+                            $ingredients = [];
+                            $maxIngredients = 20;
+
+                            for ($iterateIngredients = 1; $iterateIngredients <= $maxIngredients; $iterateIngredients++) {
+                                $ingredient = $meal->{'strIngredient' . $iterateIngredients};
+                                if (($ingredient || !empty($ingredient)) && $iterateIngredients <= $maxIngredients) {
+                                    $ingredients[$iterateIngredients]['name'] = $ingredient;
+                                    $ingredients[$iterateIngredients]['measure'] = $meal->{'strMeasure' . $iterateIngredients};
+                                }
+                                $iterateIngredients++;
+                            }
+
+                            foreach ($ingredients as $ingredient) {
+                                $entityIngredient = new Ingredients();
+                                $entityIngredient->setName($ingredient['name']);
+                                $entityIngredient->setMeasure($ingredient['measure']);
+                                $entityIngredient->setRecipie($entityRecipy);
+                                $doctrineManager->persist($entityIngredient);
+                            }
+
+                            $doctrineManager->persist($entityRecipy);
+                            $doctrineManager->flush();
                         }
-                        $this->addFlash('notice', 'Saved succeeded');
                     }
+                    $this->addFlash('notice', 'Saved succeeded');
                 }
             }
         }
 
-        $meals = $doctrineManager->getRepository(Recipie::class)->findAll();
-
-        return $this->render('admin_panel/index.html.twig', [
-            'controller_name' => 'PanelController',
-            'add_recipie_form' => $form->createView(),
-            'meals' => $meals
-        ]);
+        return $this->redirectToRoute('admin_panel');
     }
 }
