@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ingredients;
 use App\Entity\Recipie;
-use App\Entity\Tags;
+use App\Entity\Tag;
 use App\Form\EditRecipieType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

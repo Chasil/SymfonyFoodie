@@ -5,7 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use App\Entity\Ingredients;
 use App\Entity\Recipie;
-use App\Entity\Tags;
+use App\Entity\Tag;
 use App\Form\EditRecipieType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -88,7 +88,7 @@ class RecipieController extends AbstractController
                 $recipie->addCategory($category);
             }
 
-            $tags = $doctrineManager->getRepository(Tags::class)->findBy(['name' => $id]);
+            $tags = $doctrineManager->getRepository(Tag::class)->findBy(['name' => $id]);
 
             foreach ($tags as $tag) {
                 $doctrineManager->remove($tag);
@@ -97,7 +97,7 @@ class RecipieController extends AbstractController
             $formTags = explode(",", str_replace(' ', '', $form->get('tags')->getData()));
 
             foreach($formTags as $tag) {
-                $entityTags = new Tags();
+                $entityTags = new Tag();
                 $tagObject = $entityTags->setName($tag);
                 $tagObject->addRecipie($recipie);
                 $doctrineManager->persist($entityTags);

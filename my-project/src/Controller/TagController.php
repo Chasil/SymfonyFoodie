@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Recipie;
-use App\Entity\Tags;
+use App\Entity\Tag;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,8 +16,8 @@ class TagController extends AbstractController
     {
 
         $doctrineManager = $doctrine->getManager();
-        /** @var Tags $tag */
-        $tag = $doctrineManager->getRepository(Tags::class)->findOneBy(['name' => $tagName]);
+        /** @var Tag $tag */
+        $tag = $doctrineManager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
         $recipies = $tag->getRecipies()->getValues();
 
         return $this->render('tag/index.html.twig', [

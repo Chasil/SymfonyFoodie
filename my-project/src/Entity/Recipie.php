@@ -34,7 +34,7 @@ class Recipie
     #[ORM\Column]
     private ?bool $isVisible = null;
 
-    #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Tags::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Tag::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
 
     #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Category::class, cascade: ['persist'], orphanRemoval: false)]
@@ -146,14 +146,14 @@ class Recipie
     }
 
     /**
-     * @return Collection<int, Tags>
+     * @return Collection<int, Tag>
      */
     public function getTags(): Collection
     {
         return $this->tags;
     }
 
-    public function addTag(tags $tag): self
+    public function addTag(Tag $tag): self
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
@@ -162,7 +162,7 @@ class Recipie
         return $this;
     }
 
-    public function removeTag(tags $tag): self
+    public function removeTag(Tag $tag): self
     {
         $this->tags->removeElement($tag);
 

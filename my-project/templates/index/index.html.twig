@@ -162,7 +162,7 @@
                             <div class="widget-title">
                                 <h6>popular tags</h6>
                             </div>
-                            <!-- Tags -->
+                            <!-- Tag -->
                             <ol class="popular-tags d-flex flex-wrap">
                                 {%  for tag in tags %}
                                     <li><a href="{{ path('tagName', {tagName: tag.name}) }}">{{ tag.name }}</a></li>

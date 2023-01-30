@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Recipie;
-use App\Entity\Tags;
+use App\Entity\Tag;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ class IndexController extends AbstractController
         /** @var Recipie $recipies */
         $recipies = $doctrineManager->getRepository(Recipie::class)->findBy(['isVisible' => 1]);
         $categories = $doctrineManager->getRepository(Category::class)->findAll();
-        $tags = $doctrineManager->getRepository(Tags::class)->findAll();
+        $tags = $doctrineManager->getRepository(Tag::class)->findAll();
 
         return $this->render('index/index.html.twig', [
             'recipies' => $recipies,

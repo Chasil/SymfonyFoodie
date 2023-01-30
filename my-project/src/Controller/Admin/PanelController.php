@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Ingredients;
 use App\Entity\Recipie;
-use App\Entity\Tags;
+use App\Entity\Tag;
 use App\Entity\Category;
 use App\Form\AddRecipieType;
 use App\Repository\CategoryRepository;
@@ -74,7 +74,7 @@ class PanelController extends AbstractController
                             $tags = explode(",", $meal->strTags);
 
                             foreach ($tags as $tag) {
-                                $doctrineManager->getRepository(Tags::class)->addTag($tag, $entityRecipy);
+                                $doctrineManager->getRepository(Tag::class)->addTag($tag, $entityRecipy);
                             }
 
                             $ingredients = [];
