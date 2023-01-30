@@ -38,7 +38,7 @@ class Recipie
     private Collection $tags;
 
     #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Category::class, cascade: ['persist'], orphanRemoval: false)]
-    private Collection $category;
+    private Collection $categories;
 
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
@@ -47,7 +47,7 @@ class Recipie
     {
         $this->ingredients = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->category = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -174,7 +174,7 @@ class Recipie
      */
     public function getCategory(): Collection
     {
-        return $this->category;
+        return $this->categories;
     }
 
     /**
@@ -183,22 +183,22 @@ class Recipie
      */
     public function setCategory(Collection $categories): self
     {
-        $this->category = $categories;
+        $this->categories = $categories;
         return $this;
     }
 
-    public function addCategory(category $category): self
+    public function addCategory(Category $category): self
     {
-        if (!$this->category->contains($category)) {
-            $this->category->add($category);
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
         }
 
         return $this;
     }
 
-    public function removeCategory(category $category): self
+    public function removeCategory(Category $category): self
     {
-        $this->category->removeElement($category);
+        $this->categories->removeElement($category);
 
         return $this;
     }
