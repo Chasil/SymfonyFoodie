@@ -18,12 +18,12 @@ class Category
     #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Recipie::class, mappedBy: 'category')]
-    private Collection $recipie;
+    #[ORM\ManyToMany(targetEntity: Recipie::class, mappedBy: 'categories')]
+    private Collection $recipies;
 
     public function __construct()
     {
-        $this->recipie = new ArrayCollection();
+        $this->recipies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,16 +46,16 @@ class Category
     /**
      * @return Collection<int, Recipie>
      */
-    public function getRecipie(): Collection
+    public function getRecipies(): Collection
     {
-        return $this->recipie;
+        return $this->recipies;
     }
 
     public function addRecipie(Recipie $recipie): self
     {
-        if (!$this->recipie->contains($recipie)) {
-            $this->recipie->add($recipie);
-            $recipie->addCategory($this);
+        if (!$this->recipies->contains($recipie)) {
+            $this->recipies->add($recipie);
+            $recipies->addCategory($this);
         }
 
         return $this;
@@ -63,7 +63,7 @@ class Category
 
     public function removeRecipie(Recipie $recipie): self
     {
-        $this->recipie->removeElement($recipie);
+        $this->recipies->removeElement($recipie);
 
         return $this;
     }

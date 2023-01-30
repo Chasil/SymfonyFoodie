@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Recipie;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,10 +16,9 @@ class CategoriesController extends AbstractController
     {
         $doctrineManager = $doctrine->getManager();
 
-        $categories = $doctrineManager->getRepository(Recipie::class)->findAllCategories();
+        $categories = $doctrineManager->getRepository(Category::class)->findAll();
 
         return $this->render('categories/index.html.twig', [
-            'controller_name' => 'CategoriesController',
             'categories' => $categories
         ]);
     }

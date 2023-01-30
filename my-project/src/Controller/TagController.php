@@ -14,14 +14,12 @@ class TagController extends AbstractController
     #[Route('/tag/{tagName}', name: 'tagName')]
     public function index(string $tagName, ManagerRegistry $doctrine): Response
     {
-
         $doctrineManager = $doctrine->getManager();
         /** @var Tag $tag */
         $tag = $doctrineManager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
         $recipies = $tag->getRecipies()->getValues();
 
         return $this->render('tag/index.html.twig', [
-            'controller_name' => 'TagController',
             'recipies' => $recipies,
             'tag_name' => $tagName
         ]);

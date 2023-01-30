@@ -39,13 +39,6 @@ class RecipieRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllCategories(): array {
-        return $this->createQueryBuilder('r')
-            ->select('r.category')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findGroupedCategories(): array {
         return $this->createQueryBuilder('r')
             ->select('r.category as name')
