@@ -81,7 +81,7 @@
                             </div>
                             <ol class="foode-catagories">
                                 {% for category in categories %}
-                                    <li><a href="{{ path('category', {category: category.name}) }}"><span><i class="fa fa-stop" aria-hidden="true"></i> {{ category.name }}</span> <span>({{ category.amount }})</span></a></li>
+                                    <li><a href="{{ path('category', {categoryName: category.name}) }}"><span><i class="fa fa-stop" aria-hidden="true"></i> {{ category.name }}</span> <span>({{ category.amount }})</span></a></li>
                                 {% endfor %}
                             </ol>
                         </div>

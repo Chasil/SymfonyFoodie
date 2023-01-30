@@ -55,7 +55,7 @@ class Category
     {
         if (!$this->recipies->contains($recipie)) {
             $this->recipies->add($recipie);
-            $recipies->addCategory($this);
+            $recipie->addCategory($this);
         }
 
         return $this;

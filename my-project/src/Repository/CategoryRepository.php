@@ -56,6 +56,18 @@ class CategoryRepository extends ServiceEntityRepository
         return $category;
     }
 
+    /**
+     * @return array
+     */
+    public function findGroupedCategories(): array {
+        return $this->createQueryBuilder('c')
+            ->select('c.name')
+            ->addSelect('count(c.name) as amount')
+            ->groupBy('c.name')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Category[] Returns an array of Category objects
 //     */
