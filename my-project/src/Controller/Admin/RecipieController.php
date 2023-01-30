@@ -3,7 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
-use App\Entity\Ingredients;
+use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
 use App\Form\EditRecipieType;
@@ -103,7 +103,7 @@ class RecipieController extends AbstractController
                 $doctrineManager->persist($entityTags);
             }
 
-            $ingredients = $doctrineManager->getRepository(Ingredients::class)->findBy(['name' => $id]);
+            $ingredients = $doctrineManager->getRepository(Ingredient::class)->findBy(['name' => $id]);
 
             foreach($ingredients as $ingredient) {
                 $doctrineManager->remove($ingredient);
@@ -112,7 +112,7 @@ class RecipieController extends AbstractController
             $formIngredients = explode(",", str_replace(' ', '', $form->get('ingredients')->getData()));
 
             foreach($formIngredients as $ingredient) {
-                $entityIngredients = new Ingredients();
+                $entityIngredients = new Ingredient();
                 $ingredientObject = $entityIngredients->setName($ingredient);
                 $entityIngredients->setMeasure('asd');
                 $ingredientObject->setRecipie($recipie);

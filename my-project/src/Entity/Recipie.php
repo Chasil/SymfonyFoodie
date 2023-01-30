@@ -28,7 +28,7 @@ class Recipie
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Ingredients::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'recipie', targetEntity: Ingredient::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $ingredients;
 
     #[ORM\Column]
@@ -104,14 +104,14 @@ class Recipie
     }
 
     /**
-     * @return Collection<int, Ingredients>
+     * @return Collection<int, Ingredient>
      */
     public function getIngredients(): Collection
     {
         return $this->ingredients;
     }
 
-    public function addIngredient(Ingredients $ingredient): self
+    public function addIngredient(Ingredient $ingredient): self
     {
         if (!$this->ingredients->contains($ingredient)) {
             $this->ingredients->add($ingredient);
@@ -121,7 +121,7 @@ class Recipie
         return $this;
     }
 
-    public function removeIngredient(Ingredients $ingredient): self
+    public function removeIngredient(Ingredient $ingredient): self
     {
         if ($this->ingredients->removeElement($ingredient)) {
             // set the owning side to null (unless already changed)

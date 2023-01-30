@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Ingredients;
+use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
 use App\Form\EditRecipieType;

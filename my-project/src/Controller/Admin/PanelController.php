@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Ingredients;
+use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
 use App\Entity\Category;
@@ -90,7 +90,7 @@ class PanelController extends AbstractController
                             }
 
                             foreach ($ingredients as $ingredient) {
-                                $entityIngredient = new Ingredients();
+                                $entityIngredient = new Ingredient();
                                 $entityIngredient->setName($ingredient['name']);
                                 $entityIngredient->setMeasure($ingredient['measure']);
                                 $entityIngredient->setRecipie($entityRecipy);
