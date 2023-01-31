@@ -16,15 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class RecipieController extends AbstractController
 {
     #[Route('/recipie/{id}', name: 'recipie')]
-    public function index(int $id, ManagerRegistry $doctrine): Response {
+    public function index(Recipie $recipie, ManagerRegistry $doctrine): Response {
 
         if(!$this->getUser()) {
             return $this->redirectToRoute('index');
         }
 
         $doctrineManager = $doctrine->getManager();
-        /** @var Recipie $recipie */
-        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
         $tags = $recipie->getTags()->getValues();
         $ingredients = $recipie->getIngredients()->getValues();
 

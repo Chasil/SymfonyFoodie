@@ -4,7 +4,7 @@ namespace App\Form;
 
 use App\Entity\Recipie;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,7 +41,7 @@ class EditRecipieType extends AbstractType
             ->add('description',TextType::class, ['attr' => ['maxlength' => 1000]])
             ->add('category', TextType::class, ['mapped' => false, 'data' => implode(",", $categories)])
             ->add('preparation',TextType::class, ['attr' => ['maxlength' => 10000]])
-            ->add('isVisible', IntegerType::class)
+            ->add('isVisible', CheckboxType::class)
             ->add('photo')
             ->add('tags', TextType::class, ['mapped' => false, 'data' => implode(",", $tags)])
             ->add('ingredients', TextType::class, ['mapped' => false, 'data' => implode(",", $ingredients)])

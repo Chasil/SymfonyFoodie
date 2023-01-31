@@ -10,17 +10,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoryController extends AbstractController
 {
-    #[Route('/category/{categoryName}', name: 'category')]
-    public function index(string $categoryName, ManagerRegistry $doctrine): Response
+    #[Route('/category/{name}', name: 'category')]
+    public function index(Category $category): Response
     {
-        $doctrineManager = $doctrine->getManager();
-        /** @var Category $category */
-        $category = $doctrineManager->getRepository(Category::class)->findOneBy(['name' => $categoryName]);
         $recipies = $category->getRecipies()->getValues();
 
         return $this->render('category/index.html.twig', [
             'recipies' => $recipies,
-            'category_name' => $categoryName
+            'category_name' => $category->getName()
         ]);
     }
 }

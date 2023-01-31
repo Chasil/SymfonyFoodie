@@ -11,17 +11,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TagController extends AbstractController
 {
-    #[Route('/tag/{tagName}', name: 'tagName')]
-    public function index(string $tagName, ManagerRegistry $doctrine): Response
+    #[Route('/tag/{name}', name: 'tag')]
+    public function index(Tag $tag): Response
     {
-        $doctrineManager = $doctrine->getManager();
-        /** @var Tag $tag */
-        $tag = $doctrineManager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
         $recipies = $tag->getRecipies()->getValues();
 
         return $this->render('tag/index.html.twig', [
             'recipies' => $recipies,
-            'tag_name' => $tagName
+            'tag_name' => $tag->getName()
         ]);
     }
 }

@@ -27,14 +27,13 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/delete/{id}', name: 'delete_recipie')]
-    public function delete(int $id, ManagerRegistry $doctrine) {
+    public function delete(Recipie $recipie, ManagerRegistry $doctrine) {
 
         if(!$this->getUser()) {
             return $this->redirectToRoute('index');
         }
 
         $doctrineManager = $doctrine->getManager();
-        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
 
         if($this->getUser() == $recipie->getUser()) {
             $doctrineManager->remove($recipie);
@@ -46,16 +45,12 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'edit_recipie', methods: ['GET'])]
-    public function edit(int $id, ManagerRegistry $doctrine, Request $request): Response {
+    public function edit(Recipie $recipie, ManagerRegistry $doctrine): Response {
 
         if(!$this->getUser()) {
             return $this->redirectToRoute('index');
         }
 
-        $doctrineManager = $doctrine->getManager();
-
-        /** @var Recipie $recipie */
-        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
         $form = $this->createForm(EditRecipieType::class, $recipie);
 
         return $this->render('recipie/edit.html.twig', [
@@ -64,12 +59,9 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'save_recipie', methods: ['POST'])]
-    public function saveEdition(int $id, ManagerRegistry $doctrine, Request $request): Response {
+    public function saveEdition(Recipie $recipie, ManagerRegistry $doctrine, Request $request): Response {
 
         $doctrineManager = $doctrine->getManager();
-
-        /** @var Recipie $recipie */
-        $recipie = $doctrineManager->getRepository(Recipie::class)->find($id);
 
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
@@ -143,7 +135,7 @@ class RecipieController extends AbstractController
         $doctrineManager->persist($recipie);
         $doctrineManager->flush();
 
-        return $this->redirectToRoute('edit_recipie', ['id' => $id]);
+        return $this->redirectToRoute('edit_recipie', ['id' => $recipie->getId()]);
     }
 
     /**
