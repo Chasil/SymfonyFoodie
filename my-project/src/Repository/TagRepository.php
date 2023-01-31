@@ -58,6 +58,22 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $name
+     * @return Tag
+     */
+    public function getTagByName(string $name): Tag
+    {
+        $tag = $this->findOneBy(['name' => $name]);
+
+        if(!$tag) {
+            $tag = new Tag();
+            $tag->setName($name);
+            $this->getEntityManager()->persist($tag);
+        }
+        return $tag;
+    }
+
+    /**
      * @return Tag[] Returns an array of Tag objects
      */
     public function getGrouped(): array

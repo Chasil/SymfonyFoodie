@@ -123,12 +123,7 @@ class Recipie
 
     public function removeIngredient(Ingredient $ingredient): self
     {
-        if ($this->ingredients->removeElement($ingredient)) {
-            // set the owning side to null (unless already changed)
-            if ($ingredient->getRecipie() === $this) {
-                $ingredient->setRecipie(null);
-            }
-        }
+        $this->ingredients->removeElement($ingredient);
 
         return $this;
     }
