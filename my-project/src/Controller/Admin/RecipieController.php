@@ -12,6 +12,7 @@ use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -75,8 +76,14 @@ class RecipieController extends AbstractController
         $recipie->setDescription($form->get('description')->getData());
         $recipie->setPreparation($form->get('preparation')->getData());
         $recipie->setIsVisible($form->get('isVisible')->getData());
-        $recipie->setPhoto($form->get('photo')->getData());
         $recipie->setUser($this->getUser());
+
+        /** @var UploadedFile $picture */
+        $picture = $form->get('photo')->getData();
+        $originalFileName = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
+        $newFileName = $originalFileName .'_'. uniqid() .'.' . $picture->guessExtension();
+        $picture->move('images/hosting', $newFileName);
+        $recipie->setPhoto($newFileName);
 
         $formCategories = $this->splitItemsToArray($form->get('category')->getData());
 

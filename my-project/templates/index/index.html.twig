@@ -35,7 +35,7 @@
                         <div class="single-blog-post d-flex flex-wrap mt-50">
                             <!-- Thumbnail -->
                             <div class="post-thumbnail mb-50">
-                                <a href="recipe.html"><img src="{{ recipie.photo }}" alt=""></a>
+                                <a href="recipe.html"><img src="/images/hosting/{{ recipie.photo }}" alt=""></a>
                             </div>
                             <!-- Content -->
                             <div class="post-content mb-50">
@@ -81,7 +81,7 @@
                             </div>
                             <ol class="foode-catagories">
                                 {% for category in categories %}
-                                    <li><a href="{{ path('category', {categoryName: category.name}) }}"><span><i class="fa fa-stop" aria-hidden="true"></i> {{ category.name }}</span> <span>({{ category.amount }})</span></a></li>
+                                    <li><a href="{{ path('category', {name: category.name}) }}"><span><i class="fa fa-stop" aria-hidden="true"></i> {{ category.name }}</span> <span>({{ category.amount }})</span></a></li>
                                 {% endfor %}
                             </ol>
                         </div>
@@ -165,7 +165,7 @@
                             <!-- Tag -->
                             <ol class="popular-tags d-flex flex-wrap">
                                 {%  for tag in tags %}
-                                    <li><a href="{{ path('tagName', {tagName: tag.name}) }}">{{ tag.name }}</a></li>
+                                    <li><a href="{{ path('tag', {name: tag.name}) }}">{{ tag.name }}</a></li>
                                 {% endfor %}
                             </ol>
                         </div>

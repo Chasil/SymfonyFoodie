@@ -10,9 +10,11 @@ use App\Form\AddRecipieType;
 use App\Repository\CategoryRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PanelController extends AbstractController
 {
@@ -34,7 +36,7 @@ class PanelController extends AbstractController
     }
 
     #[Route('/panel', name: 'save', methods: ['POST'])]
-    public function saveRecipie(Request $request, ManagerRegistry $doctrine): Response {
+    public function saveRecipie(Request $request, ManagerRegistry $doctrine, HttpClientInterface $client, $publicDirectory): Response {
 
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
@@ -62,9 +64,21 @@ class PanelController extends AbstractController
                             $entityRecipy->setName($meal->strMeal);
                             $entityRecipy->setDescription("");
                             $entityRecipy->setPreparation($meal->strInstructions);
-                            $entityRecipy->setPhoto($meal->strMealThumb);
                             $entityRecipy->setIsVisible(1);
                             $entityRecipy->setUser($this->getUser());
+
+                            $pictureURL = $meal->strMealThumb;
+                            $picture = $client->request(
+                                'GET',
+                                $pictureURL
+                            );
+
+                            $originalFileName = pathinfo($pictureURL, PATHINFO_FILENAME);
+                            $newFileName = $originalFileName .'_'. uniqid() .'.' . pathinfo($pictureURL, PATHINFO_EXTENSION);
+                            $filesystem = new Filesystem();
+                            dump($picture);
+                            $filesystem->appendToFile($publicDirectory . 'images/hosting/' . $newFileName, $picture);
+                            $entityRecipy->setPhoto($newFileName);
 
                             /** @var CategoryRepository $categoryRepository */
                             $categoryRepository = $doctrineManager->getRepository(Category::class);
