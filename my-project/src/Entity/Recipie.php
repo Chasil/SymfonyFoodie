@@ -32,7 +32,7 @@ class Recipie
     private Collection $ingredients;
 
     #[ORM\Column]
-    private ?bool $isVisible = null;
+    private ?bool $isVisible = true;
 
     #[ORM\ManyToMany(inversedBy: 'recipie', targetEntity: Tag::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $tags;
@@ -170,16 +170,6 @@ class Recipie
     public function getCategory(): Collection
     {
         return $this->categories;
-    }
-
-    /**
-     * @param Collection<int, Category> $categories
-     * @return $this
-     */
-    public function setCategory(Collection $categories): self
-    {
-        $this->categories = $categories;
-        return $this;
     }
 
     public function addCategory(Category $category): self

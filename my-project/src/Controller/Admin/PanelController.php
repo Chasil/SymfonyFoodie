@@ -2,19 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Ingredient;
 use App\Entity\Recipie;
-use App\Entity\Tag;
-use App\Entity\Category;
 use App\Form\AddRecipieType;
-use App\Repository\CategoryRepository;
+use App\Serializer\RecipieCollection;
+use App\Service\RecipieCreator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class PanelController extends AbstractController
 {
@@ -36,86 +33,30 @@ class PanelController extends AbstractController
     }
 
     #[Route('/panel', name: 'save', methods: ['POST'])]
-    public function saveRecipie(Request $request, ManagerRegistry $doctrine, HttpClientInterface $client, $publicDirectory): Response {
+    public function saveRecipie(
+        Request $request,
+        RecipieCreator $recipieCreator,
+        SerializerInterface $serializer
+    ): Response
+    {
 
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();
-        $doctrineManager = $doctrine->getManager();
 
         if($apiURL) {
 
             $jsonData = file_get_contents($apiURL);
-            $responseData = json_decode($jsonData);
 
-            if($responseData) {
+            /** @var RecipieCollection $recipieCollection */
+            $recipieCollection = $serializer->deserialize($jsonData, RecipieCollection::class, 'json');
 
-                if ($this->getUser()) {
-
-                    foreach ($responseData as $meals) {
-                        foreach ($meals as $meal) {
-
-//                            $recipieCreator = new RecipieCreator();
-//                            $recipieCreator->create([
-//                                'name' => $meal->strMeal,
-//                            ]);
-                            $entityRecipy = new Recipie();
-
-                            $entityRecipy->setName($meal->strMeal);
-                            $entityRecipy->setDescription("");
-                            $entityRecipy->setPreparation($meal->strInstructions);
-                            $entityRecipy->setIsVisible(1);
-                            $entityRecipy->setUser($this->getUser());
-
-                            $pictureURL = $meal->strMealThumb;
-                            $picture = $client->request(
-                                'GET',
-                                $pictureURL
-                            );
-
-                            $originalFileName = pathinfo($pictureURL, PATHINFO_FILENAME);
-                            $newFileName = $originalFileName .'_'. uniqid() .'.' . pathinfo($pictureURL, PATHINFO_EXTENSION);
-                            $filesystem = new Filesystem();
-                            $filesystem->appendToFile($publicDirectory . 'images/hosting/' . $newFileName, $picture->getContent());
-                            $entityRecipy->setPhoto($newFileName);
-
-                            /** @var CategoryRepository $categoryRepository */
-                            $categoryRepository = $doctrineManager->getRepository(Category::class);
-                            $category = $categoryRepository->getCategoryByName($meal->strCategory);
-                            $entityRecipy->addCategory($category);
-
-                            $tags = explode(",", $meal->strTags);
-
-                            foreach ($tags as $tag) {
-                                $doctrineManager->getRepository(Tag::class)->addTag($tag, $entityRecipy);
-                            }
-
-                            $ingredients = [];
-                            $maxIngredients = 20;
-
-                            for ($iterateIngredients = 1; $iterateIngredients <= $maxIngredients; $iterateIngredients++) {
-                                $ingredient = $meal->{'strIngredient' . $iterateIngredients};
-                                if (($ingredient || !empty($ingredient)) && $iterateIngredients <= $maxIngredients) {
-                                    $ingredients[$iterateIngredients]['name'] = $ingredient;
-                                    $ingredients[$iterateIngredients]['measure'] = $meal->{'strMeasure' . $iterateIngredients};
-                                }
-                                $iterateIngredients++;
-                            }
-
-                            foreach ($ingredients as $ingredient) {
-                                $entityIngredient = new Ingredient();
-                                $entityIngredient->setName($ingredient['name']);
-                                $entityIngredient->setMeasure($ingredient['measure']);
-                                $entityIngredient->setRecipie($entityRecipy);
-                                $doctrineManager->persist($entityIngredient);
-                            }
-
-                            $doctrineManager->persist($entityRecipy);
-                            $doctrineManager->flush();
-                        }
-                    }
-                    $this->addFlash('notice', 'Saved succeeded');
+            if ($this->getUser()) {
+                foreach ($recipieCollection->getMeals() as $recipie) {
+                    $recipieCreator->prepareIngredients($recipie, $recipie->getDeserializedIngredients());
+                    $recipieCreator->create($recipie);
                 }
+                $this->addFlash('notice', 'Saved succeeded');
             }
         }
 

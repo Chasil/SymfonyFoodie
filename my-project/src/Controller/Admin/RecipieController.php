@@ -68,9 +68,6 @@ class RecipieController extends AbstractController
         $form->handleRequest($request);
 
 //            $recipieCreator = new RecipieCreator();
-//            $recipieCreator->create([
-//                'name' => $form->get('name')->getData(),
-//            ]);
 
         $recipie->setName($form->get('name')->getData());
         $recipie->setDescription($form->get('description')->getData());

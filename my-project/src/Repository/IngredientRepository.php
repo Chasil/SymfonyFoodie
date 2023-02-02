@@ -43,14 +43,14 @@ class IngredientRepository extends ServiceEntityRepository
      * @param string $name
      * @return Ingredient
      */
-    public function getIngredientByName(string $name): Ingredient
+    public function getIngredientByName(string $name, string $measure): Ingredient
     {
         $ingredient = $this->findOneBy(['name' => $name]);
 
         if(!$ingredient) {
             $ingredient = new Ingredient();
             $ingredient->setName($name);
-            $ingredient->setMeasure('1g');
+            $ingredient->setMeasure($measure);
             $this->getEntityManager()->persist($ingredient);
         }
         return $ingredient;
