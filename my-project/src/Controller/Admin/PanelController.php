@@ -76,8 +76,7 @@ class PanelController extends AbstractController
                             $originalFileName = pathinfo($pictureURL, PATHINFO_FILENAME);
                             $newFileName = $originalFileName .'_'. uniqid() .'.' . pathinfo($pictureURL, PATHINFO_EXTENSION);
                             $filesystem = new Filesystem();
-                            dump($picture);
-                            $filesystem->appendToFile($publicDirectory . 'images/hosting/' . $newFileName, $picture);
+                            $filesystem->appendToFile($publicDirectory . 'images/hosting/' . $newFileName, $picture->getContent());
                             $entityRecipy->setPhoto($newFileName);
 
                             /** @var CategoryRepository $categoryRepository */
