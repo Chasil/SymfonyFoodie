@@ -20,3 +20,6 @@
 ###< symfony/phpunit-bridge ###
 /.env
 /.env.test
+
+
+/public/images/hosting/
