@@ -40,9 +40,11 @@ class RecipieCreator extends AbstractController {
      * @param array $tags
      * @return void
      */
-    public function prepareTags(Recipie $recipie, array $tags)
+    public function prepareTags(Recipie $recipie, string $tag)
     {
         $doctrineManager = $this->doctrine->getManager();
+        $tags = $this->splitItemsToArray($tag);
+
         foreach($tags as $tag) {
             /** @var TagRepository $tagRepository */
             $tagRepository = $doctrineManager->getRepository(Tag::class);
@@ -51,29 +53,41 @@ class RecipieCreator extends AbstractController {
         }
     }
 
-    public function prepareCategories(Recipie $recipie, array $categories)
+    public function prepareCategories(Recipie $recipie, string $category)
     {
         $doctrineManager = $this->doctrine->getManager();
+
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $doctrineManager->getRepository(Category::class);
-        $category = $categoryRepository->getCategoryByName($recipie->getCategory());
+        /** @var Category $category */
+        $category = $categoryRepository->getCategoryByName($category);
         $recipie->addCategory($category);
     }
 
-    public function create(Recipie $recipie): bool {
-
+    public function create(Recipie $recipie): bool
+    {
         $doctrineManager = $this->doctrine->getManager();
         $recipie->setUser($this->getUser());
 
         $newFileName = $this->imageCreator->create($recipie->getPhoto());
         $recipie->setPhoto($newFileName);
 
-        $this->prepareTags($recipie, $recipie->getTags());
-        $this->prepareCategories($recipie, $recipie->getCategory());
-
         $doctrineManager->persist($recipie);
         $doctrineManager->flush();
 
         return true;
+    }
+
+    // TODO Przenieść do osobnego serwisu, bo obecnie jest 2x
+    /**
+     * @param string $string
+     * @return array
+     */
+    public function splitItemsToArray(string $items): array
+    {
+        return array_map(
+            'trim',
+            explode(",", $items)
+        );
     }
 }

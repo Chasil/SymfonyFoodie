@@ -42,6 +42,9 @@ class PanelController extends AbstractController
 
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
+
+        //TODO walidacja linku
+        //TODO weryfikować czy takowy przepis już istnieje - trzeba dodać ID z api do bazy
         $apiURL = $form->get('meal_link')->getData();
 
         if($apiURL) {
@@ -52,9 +55,11 @@ class PanelController extends AbstractController
             $recipieCollection = $serializer->deserialize($jsonData, RecipieCollection::class, 'json');
 
             if ($this->getUser()) {
-                foreach ($recipieCollection->getMeals() as $recipie) {
-                    $recipieCreator->prepareIngredients($recipie, $recipie->getDeserializedIngredients());
-                    $recipieCreator->create($recipie);
+                foreach ($recipieCollection->getMeals() as $serializedRecipie) {
+                    $recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
+                    $recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
+                    $recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
+                    $recipieCreator->create($serializedRecipie->getRecipie());
                 }
                 $this->addFlash('notice', 'Saved succeeded');
             }

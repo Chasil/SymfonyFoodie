@@ -34,8 +34,9 @@ class EditRecipieType extends AbstractType
         $ingredientsValues = $options['data']->getIngredients()->getValues();
 
         $ingredients = [];
-        foreach($ingredientsValues as $ingredientsValue) {
-            $ingredients[] = $ingredientsValue->getName();
+        foreach($ingredientsValues as $key => $ingredientsValue) {
+            $ingredients['name'][$key] = $ingredientsValue->getName();
+            $ingredients['measure'][$key] = $ingredientsValue->getMeasure();
         }
 
         $builder
@@ -57,7 +58,8 @@ class EditRecipieType extends AbstractType
                 ]
             ])
             ->add('tags', TextType::class, ['mapped' => false, 'data' => implode(",", $tags)])
-            ->add('ingredients', TextType::class, ['mapped' => false, 'data' => implode(",", $ingredients)])
+            ->add('ingredients', TextType::class, ['mapped' => false, 'data' => implode(",", $ingredients['name'])])
+            ->add('measure', TextType::class, ['mapped' => false, 'data' => implode(",", $ingredients['measure'])])
             ->add('save', SubmitType::class)
         ;
     }

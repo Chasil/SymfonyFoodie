@@ -28,7 +28,8 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/delete/{id}', name: 'delete_recipie')]
-    public function delete(Recipie $recipie, ManagerRegistry $doctrine) {
+    public function delete(Recipie $recipie, ManagerRegistry $doctrine)
+    {
 
         if(!$this->getUser()) {
             return $this->redirectToRoute('index');
@@ -46,7 +47,8 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'edit_recipie', methods: ['GET'])]
-    public function edit(Recipie $recipie, ManagerRegistry $doctrine): Response {
+    public function edit(Recipie $recipie, ManagerRegistry $doctrine): Response
+    {
 
         if(!$this->getUser()) {
             return $this->redirectToRoute('index');
@@ -60,20 +62,23 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'save_recipie', methods: ['POST'])]
-    public function saveEdition(Recipie $recipie, ManagerRegistry $doctrine, Request $request): Response {
+    public function saveEdition(Recipie $recipie, ManagerRegistry $doctrine, Request $request): Response
+    {
 
         $doctrineManager = $doctrine->getManager();
 
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
-//            $recipieCreator = new RecipieCreator();
+        //TODO przerobić to na wpólny zapis razem z zapisem z API RecipieCreator->create()
 
         $recipie->setName($form->get('name')->getData());
         $recipie->setDescription($form->get('description')->getData());
         $recipie->setPreparation($form->get('preparation')->getData());
         $recipie->setIsVisible($form->get('isVisible')->getData());
         $recipie->setUser($this->getUser());
+
+        //TODO pozwolić na pominięcie dodania zdjęcia jeśli już istnieje
 
         /** @var UploadedFile $picture */
         $picture = $form->get('photo')->getData();
@@ -117,6 +122,9 @@ class RecipieController extends AbstractController
             $recipie->addTag($tag);
         }
 
+        //TODO zrobienie w ogóle od nowa ładowania ingredients/measures w formularzu,
+        // by to było powiązane 1:1 bo obecne rozwiązanie jest z dupy
+
         $formIngredients = $this->splitItemsToArray($form->get('ingredients')->getData());
 
         $recipieIngredients = $recipie->getIngredients();
@@ -131,8 +139,7 @@ class RecipieController extends AbstractController
         foreach($formIngredients as $formIngredient) {
             /** @var IngredientRepository $ingredientRepository */
             $ingredientRepository = $doctrineManager->getRepository(Ingredient::class);
-            //TODO trzeba dorobić miary dla składników i przekazać je do poniższej funkcji i w niej zapisać
-            $ingredient = $ingredientRepository->getIngredientByName($formIngredient);
+            $ingredient = $ingredientRepository->getIngredientByName($formIngredient, '1 gram');
             $recipie->addIngredient($ingredient);
         }
 
@@ -142,11 +149,13 @@ class RecipieController extends AbstractController
         return $this->redirectToRoute('edit_recipie', ['id' => $recipie->getId()]);
     }
 
+    // TODO Przenieść do osobnego serwisu, bo obecnie jest 2x
     /**
      * @param string $string
      * @return array
      */
-    public function splitItemsToArray(string $items): array {
+    public function splitItemsToArray(string $items): array
+    {
         return array_map(
             'trim',
             explode(",", $items)
