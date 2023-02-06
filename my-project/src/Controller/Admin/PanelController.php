@@ -15,6 +15,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class PanelController extends AbstractController
 {
+    private const DOMAIN_NAME = 'themealdb.com';
+
     #[Route('/panel', name: 'admin_panel', methods: ['GET'])]
     public function index(ManagerRegistry $doctrine): Response
     {
@@ -36,19 +38,18 @@ class PanelController extends AbstractController
     public function saveRecipie(
         Request $request,
         RecipieCreator $recipieCreator,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ManagerRegistry $doctrine
     ): Response
     {
 
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
-
-        //TODO walidacja linku
-        //TODO weryfikować czy takowy przepis już istnieje - trzeba dodać ID z api do bazy
         $apiURL = $form->get('meal_link')->getData();
 
-        if($apiURL) {
-
+        if(!str_contains($apiURL, self::DOMAIN_NAME)) {
+            $this->addFlash('error', 'Invalid URL domain.');
+        } else {
             $jsonData = file_get_contents($apiURL);
 
             /** @var RecipieCollection $recipieCollection */
@@ -56,12 +57,16 @@ class PanelController extends AbstractController
 
             if ($this->getUser()) {
                 foreach ($recipieCollection->getMeals() as $serializedRecipie) {
-                    $recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
-                    $recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
-                    $recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
-                    $recipieCreator->create($serializedRecipie->getRecipie());
+                    if($doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
+                        $this->addFlash('error', 'Recipie exists.');
+                    } else {
+                        $recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
+                        $recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
+                        $recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
+                        $recipieCreator->create($serializedRecipie->getRecipie());
+                        $this->addFlash('notice', 'Saved succeeded');
+                    }
                 }
-                $this->addFlash('notice', 'Saved succeeded');
             }
         }
 

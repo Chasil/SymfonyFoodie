@@ -7,7 +7,13 @@
 
     <div class="example-wrapper">
 
-        {% for message in app.flashes('notice') %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
             <div class="alert alert-success">
                 {{ message }}
             </div>

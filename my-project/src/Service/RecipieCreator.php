@@ -27,11 +27,12 @@ class RecipieCreator extends AbstractController {
         $doctrineManager = $this->doctrine->getManager();
 
         foreach($ingredients as $ingredient) {
-
-            /** @var IngredientRepository $ingredientRepository */
-            $ingredientRepository = $doctrineManager->getRepository(Ingredient::class);
-            $ingredient = $ingredientRepository->getIngredientByName($ingredient['name'], $ingredient['measure']);
-            $recipie->addIngredient($ingredient);
+            if(!empty($ingredient['name'] || !empty($ingredient['measure']))) {
+                /** @var IngredientRepository $ingredientRepository */
+                $ingredientRepository = $doctrineManager->getRepository(Ingredient::class);
+                $ingredient = $ingredientRepository->getIngredientByName($ingredient['name'], $ingredient['measure']);
+                $recipie->addIngredient($ingredient);
+            }
         }
     }
 

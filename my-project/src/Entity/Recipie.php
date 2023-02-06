@@ -43,6 +43,9 @@ class Recipie
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
 
+    #[ORM\Column]
+    private ?int $recipieId = null;
+
     public function __construct()
     {
         $this->ingredients = new ArrayCollection();
@@ -196,6 +199,18 @@ class Recipie
     public function setPhoto(string $photo): self
     {
         $this->photo = $photo;
+
+        return $this;
+    }
+
+    public function getRecipieId(): ?int
+    {
+        return $this->recipieId;
+    }
+
+    public function setRecipieId(int $recipieId): self
+    {
+        $this->recipieId = $recipieId;
 
         return $this;
     }

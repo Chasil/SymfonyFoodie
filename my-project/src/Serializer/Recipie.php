@@ -13,10 +13,22 @@ class Recipie
     private \App\Entity\Recipie $recipie;
     private string $category;
     private string $tag;
+    private int $recipieId;
 
     public function __construct()
     {
         $this->recipie = new \App\Entity\Recipie();
+    }
+
+    public function setIdMeal(string $recipieId): void
+    {
+        $this->recipieId = $recipieId;
+        $this->recipie->setRecipieId($recipieId);
+    }
+
+    public function getRecipieId(): int
+    {
+        return $this->recipieId;
     }
 
     public function setStrMeal(string $name): void
