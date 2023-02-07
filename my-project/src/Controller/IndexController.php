@@ -15,11 +15,8 @@ class IndexController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(ManagerRegistry $doctrine): Response
     {
-
         $doctrineManager = $doctrine->getManager();
-        /** @var Recipie $recipies */
         $recipies = $doctrineManager->getRepository(Recipie::class)->findBy(['isVisible' => 1]);
-        /** @var Category $categories */
         $categories = $doctrineManager->getRepository(Category::class)->findGroupedCategories();
         $tags = $doctrineManager->getRepository(Tag::class)->findAll();
 

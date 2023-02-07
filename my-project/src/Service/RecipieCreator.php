@@ -22,7 +22,7 @@ class RecipieCreator extends AbstractController {
      * @param array<TKey, array{name: string, measure: string}> $ingredients
      * @return void
      */
-    public function prepareIngredients(Recipie $recipie, array $ingredients)
+    public function prepareIngredients(Recipie $recipie, array $ingredients): void
     {
         $doctrineManager = $this->doctrine->getManager();
 
@@ -41,30 +41,39 @@ class RecipieCreator extends AbstractController {
      * @param array $tags
      * @return void
      */
-    public function prepareTags(Recipie $recipie, string $tag)
+    public function prepareTags(
+        Recipie $recipie,
+        array $tags
+    ): void
     {
         $doctrineManager = $this->doctrine->getManager();
         $tags = $this->splitItemsToArray($tag);
 
         foreach($tags as $tag) {
             /** @var TagRepository $tagRepository */
-            $tagRepository = $doctrineManager->getRepository(Tag::class);
+            $tagRepository = $this->doctrine->getManager()->getRepository(Tag::class);
             $tag = $tagRepository->getTagByName($tag);
             $recipie->addTag($tag);
         }
     }
 
-    public function prepareCategories(Recipie $recipie, string $category)
+    /**
+     * @param Recipie $recipie
+     * @param string $categoryName
+     * @return void
+     */
+    public function prepareCategories(Recipie $recipie, string $categoryName): void
     {
-        $doctrineManager = $this->doctrine->getManager();
-
         /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $doctrineManager->getRepository(Category::class);
-        /** @var Category $category */
-        $category = $categoryRepository->getCategoryByName($category);
+        $categoryRepository = $this->doctrine->getManager()->getRepository(Category::class);
+        $category = $categoryRepository->getCategoryByName($categoryName);
         $recipie->addCategory($category);
     }
 
+    /**
+     * @param Recipie $recipie
+     * @return bool
+     */
     public function create(Recipie $recipie): bool
     {
         $doctrineManager = $this->doctrine->getManager();
@@ -77,18 +86,5 @@ class RecipieCreator extends AbstractController {
         $doctrineManager->flush();
 
         return true;
-    }
-
-    // TODO Przenieść do osobnego serwisu, bo obecnie jest 2x
-    /**
-     * @param string $string
-     * @return array
-     */
-    public function splitItemsToArray(string $items): array
-    {
-        return array_map(
-            'trim',
-            explode(",", $items)
-        );
     }
 }

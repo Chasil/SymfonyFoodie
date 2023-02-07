@@ -20,17 +20,11 @@ class PanelController extends AbstractController
     #[Route('/panel', name: 'admin_panel', methods: ['GET'])]
     public function index(ManagerRegistry $doctrine): Response
     {
-        if(!$this->getUser()) {
-            return $this->redirectToRoute('index');
-        }
-
         $form = $this->createForm(AddRecipieType::class);
-
-        $doctrineManager = $doctrine->getManager();
 
         return $this->render('admin_panel/index.html.twig', [
             'add_recipie_form' => $form->createView(),
-            'meals' => $doctrineManager->getRepository(Recipie::class)->findAll()
+            'meals' => $doctrine->getManager()->getRepository(Recipie::class)->findAll()
         ]);
     }
 
@@ -42,7 +36,6 @@ class PanelController extends AbstractController
         ManagerRegistry $doctrine
     ): Response
     {
-
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();

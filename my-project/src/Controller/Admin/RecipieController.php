@@ -9,9 +9,9 @@ use App\Entity\Tag;
 use App\Form\EditRecipieType;
 use App\Repository\IngredientRepository;
 use App\Repository\TagRepository;
+use App\Service\Manager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,11 +30,6 @@ class RecipieController extends AbstractController
     #[Route('/recipie/delete/{id}', name: 'delete_recipie')]
     public function delete(Recipie $recipie, ManagerRegistry $doctrine)
     {
-
-        if(!$this->getUser()) {
-            return $this->redirectToRoute('index');
-        }
-
         $doctrineManager = $doctrine->getManager();
 
         if($this->getUser() == $recipie->getUser()) {
@@ -49,11 +44,6 @@ class RecipieController extends AbstractController
     #[Route('/recipie/edit/{id}', name: 'edit_recipie', methods: ['GET'])]
     public function edit(Recipie $recipie, ManagerRegistry $doctrine): Response
     {
-
-        if(!$this->getUser()) {
-            return $this->redirectToRoute('index');
-        }
-
         $form = $this->createForm(EditRecipieType::class, $recipie);
 
         return $this->render('recipie/edit.html.twig', [
@@ -62,9 +52,12 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'save_recipie', methods: ['POST'])]
-    public function saveEdition(Recipie $recipie, ManagerRegistry $doctrine, Request $request): Response
+    public function saveEdition(
+        Recipie $recipie,
+        ManagerRegistry $doctrine,
+        Request $request
+    ): Response
     {
-
         $doctrineManager = $doctrine->getManager();
 
         $form = $this->createForm(EditRecipieType::class, $recipie);
@@ -87,7 +80,7 @@ class RecipieController extends AbstractController
         $picture->move('images/hosting', $newFileName);
         $recipie->setPhoto($newFileName);
 
-        $formCategories = $this->splitItemsToArray($form->get('category')->getData());
+        $formCategories = $form->get('category')->getData();
 
         $recipeCategories = $recipie->getCategory();
         foreach ($recipeCategories as $recipeCategory) {
@@ -104,7 +97,7 @@ class RecipieController extends AbstractController
             $recipie->addCategory($category);
         }
 
-        $formTags = $this->splitItemsToArray($form->get('tags')->getData());
+        $formTags = $form->get('tags')->getData();
 
         $recipieTags = $recipie->getTags();
 
@@ -125,7 +118,7 @@ class RecipieController extends AbstractController
         //TODO zrobienie w ogóle od nowa ładowania ingredients/measures w formularzu,
         // by to było powiązane 1:1 bo obecne rozwiązanie jest z dupy
 
-        $formIngredients = $this->splitItemsToArray($form->get('ingredients')->getData());
+        $formIngredients = $form->get('ingredients')->getData();
 
         $recipieIngredients = $recipie->getIngredients();
 
@@ -146,19 +139,8 @@ class RecipieController extends AbstractController
         $doctrineManager->persist($recipie);
         $doctrineManager->flush();
 
-        return $this->redirectToRoute('edit_recipie', ['id' => $recipie->getId()]);
-    }
+        $this->addFlash('notice', 'Saved succeeded');
 
-    // TODO Przenieść do osobnego serwisu, bo obecnie jest 2x
-    /**
-     * @param string $string
-     * @return array
-     */
-    public function splitItemsToArray(string $items): array
-    {
-        return array_map(
-            'trim',
-            explode(",", $items)
-        );
+        return $this->redirectToRoute('edit_recipie', ['id' => $recipie->getId()]);
     }
 }

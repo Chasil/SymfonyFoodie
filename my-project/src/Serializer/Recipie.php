@@ -2,8 +2,7 @@
 
 namespace App\Serializer;
 
-use App\Entity\Category;
-use App\Entity\Tag;
+use App\HandleArrayInput;
 
 class Recipie
 {

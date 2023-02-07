@@ -7,6 +7,12 @@
     <section>
         <h2>Edit meal</h2>
 
+        {% for message in app.flashes('notice') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         {{ form_start(edit_form) }}
         {{ form_end(edit_form) }}
 
