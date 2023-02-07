@@ -41,9 +41,9 @@ class CategoryRepository extends ServiceEntityRepository
 
     /**
      * @param string $name
-     * @return Category
+     * @return mixed
      */
-    public function getCategoryByName(string $name): Category
+    public function getCategoryByName(string $name): mixed
     {
         $category = $this->findOneBy(['name' => $name]);
 

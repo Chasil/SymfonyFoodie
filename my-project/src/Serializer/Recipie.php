@@ -6,6 +6,8 @@ use App\HandleArrayInput;
 
 class Recipie
 {
+    use HandleArrayInput;
+
     private const INGREDIENT_NAME_KEY = 'strIngredient';
     private const INGREDIENT_MEASURE_KEY = 'strMeasure';
     private array $ingredients = [];
@@ -65,9 +67,9 @@ class Recipie
         $this->tag = $tag;
     }
 
-    public function getTag(): string
+    public function getTag(): array
     {
-        return $this->tag;
+        return $this->transformStringToArray($this->tag);
     }
 
     public function getIngredients(): array
@@ -85,5 +87,4 @@ class Recipie
             $this->ingredients[$ingredientKey]['measure'] = $value;
         }
     }
-
 }

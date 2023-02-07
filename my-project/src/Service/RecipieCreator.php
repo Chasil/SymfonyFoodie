@@ -46,9 +46,6 @@ class RecipieCreator extends AbstractController {
         array $tags
     ): void
     {
-        $doctrineManager = $this->doctrine->getManager();
-        $tags = $this->splitItemsToArray($tag);
-
         foreach($tags as $tag) {
             /** @var TagRepository $tagRepository */
             $tagRepository = $this->doctrine->getManager()->getRepository(Tag::class);

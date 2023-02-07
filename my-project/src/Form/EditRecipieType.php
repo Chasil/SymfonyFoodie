@@ -2,6 +2,7 @@
 namespace App\Form;
 
 use App\Entity\Recipie;
+use App\Form\Field\ArrayType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -60,9 +61,9 @@ class EditRecipieType extends AbstractType
                     ])
                 ]
             ])
-            ->add('tags', TextType::class, ['mapped' => false, 'data' => implode(",", $tags)])
-            ->add('ingredients', TextType::class, ['mapped' => false, 'data' => implode(",", $ingredients['name'])])
-            ->add('measure', TextType::class, ['mapped' => false, 'data' => implode(",", $ingredients['measure'])])
+            ->add('tags', ArrayType::class, ['mapped' => false, 'data' => $tags])
+            ->add('ingredients', ArrayType::class, ['mapped' => false, 'data' => $ingredients['name']])
+            ->add('measure', ArrayType::class, ['mapped' => false, 'data' => $ingredients['measure']])
             ->add('save', SubmitType::class)
         ;
     }
