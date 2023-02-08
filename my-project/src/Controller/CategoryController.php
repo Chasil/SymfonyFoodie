@@ -14,7 +14,7 @@ class CategoryController extends AbstractController
     {
         return $this->render('category/index.html.twig', [
             'recipies' => $category->getRecipies(),
-            'category_name' => $category->getName()
+            'category' => $category
         ]);
     }
 }

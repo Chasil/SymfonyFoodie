@@ -50,8 +50,7 @@ class RecipieController extends AbstractController
     public function saveEdition(
         Recipie $recipie,
         Request $request,
-        RecipieEditor $recipieEditor,
-        \App\Serializer\Recipie $serializer
+        RecipieEditor $recipieEditor
     ): Response
     {
         $form = $this->createForm(EditRecipieType::class, $recipie);
