@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ImageCreator
@@ -27,6 +28,14 @@ class ImageCreator
             $this->publicDirectory . 'images/hosting/' . $newFileName,
             $picture->getContent());
 
+        return $newFileName;
+    }
+
+    public function upload(UploadedFile $picture): string
+    {
+        $originalFileName = pathinfo($picture->getClientOriginalName(), PATHINFO_FILENAME);
+        $newFileName = $originalFileName .'_'. uniqid() .'.' . $picture->guessExtension();
+        $picture->move('images/hosting', $newFileName);
         return $newFileName;
     }
 }

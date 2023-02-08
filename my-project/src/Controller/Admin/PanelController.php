@@ -48,17 +48,15 @@ class PanelController extends AbstractController
             /** @var RecipieCollection $recipieCollection */
             $recipieCollection = $serializer->deserialize($jsonData, RecipieCollection::class, 'json');
 
-            if ($this->getUser()) {
-                foreach ($recipieCollection->getMeals() as $serializedRecipie) {
-                    if($doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
-                        $this->addFlash('error', 'Recipie exists.');
-                    } else {
-                        $recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
-                        $recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
-                        $recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
-                        $recipieCreator->create($serializedRecipie->getRecipie());
-                        $this->addFlash('notice', 'Saved succeeded');
-                    }
+            foreach ($recipieCollection->getMeals() as $serializedRecipie) {
+                if($doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
+                    $this->addFlash('error', 'Recipie exists.');
+                } else {
+                    $recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
+                    $recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
+                    $recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
+                    $recipieCreator->create($serializedRecipie->getRecipie());
+                    $this->addFlash('notice', 'Saved succeeded');
                 }
             }
         }

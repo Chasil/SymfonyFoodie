@@ -44,9 +44,6 @@ class EditRecipieType extends AbstractType
             ->add('name', TextType::class, ['attr' => ['maxlength' => 255]])
             ->add('description',TextareaType::class, ['attr' => ['maxlength' => 1000]])
             ->add('category', ArrayType::class, ['mapped' => false, 'data' => $categories])
-            // UP: Napisałeś, że lepszy byłby EntityType czyli forma wyboru z listy - to jednak zaprzecza zasadzie
-            // kategorii w tym przypadku, poniewaz zawsze pierwsza kategorie zaciagam z API, a potem daję
-            // możliwość dodawania swoich z uwagi na to, że nie mam osobnego zarządzania kategoriami
             ->add('preparation',TextareaType::class, ['attr' => ['maxlength' => 10000]])
             ->add('isVisible', CheckboxType::class)
             ->add('photo', FileType::class, [

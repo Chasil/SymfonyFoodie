@@ -77,6 +77,7 @@ class RecipieCreator extends AbstractController {
         $recipie->setUser($this->getUser());
 
         $newFileName = $this->imageCreator->create($recipie->getPhoto());
+
         $recipie->setPhoto($newFileName);
 
         $doctrineManager->persist($recipie);
