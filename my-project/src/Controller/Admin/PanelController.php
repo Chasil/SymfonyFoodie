@@ -34,8 +34,7 @@ class PanelController extends AbstractController
         RecipieCreator $recipieCreator,
         SerializerInterface $serializer,
         ManagerRegistry $doctrine
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();

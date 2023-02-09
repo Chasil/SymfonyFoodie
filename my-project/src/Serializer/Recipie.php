@@ -13,7 +13,7 @@ class Recipie
     private array $ingredients = [];
     private \App\Entity\Recipie $recipie;
     private string $category;
-    private string $tag;
+    private ?string $tag;
     private int $recipieId;
 
     public function __construct()
@@ -62,14 +62,18 @@ class Recipie
         return $this->recipie;
     }
 
-    public function setStrTags(string $tag): void
+    public function setStrTags(?string $tag): void
     {
         $this->tag = $tag;
     }
 
-    public function getTag(): array
+    public function getTag(): ?array
     {
-        return $this->transformStringToArray($this->tag);
+        if($this->tag) {
+            return $this->transformStringToArray($this->tag);
+        } else {
+            return $this->tag;
+        }
     }
 
     public function getIngredients(): array

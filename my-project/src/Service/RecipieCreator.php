@@ -6,6 +6,7 @@ use App\Entity\Category;
 use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -43,14 +44,18 @@ class RecipieCreator extends AbstractController {
      */
     public function prepareTags(
         Recipie $recipie,
-        array $tags
+        ?array $tags
     ): void
     {
-        foreach($tags as $tag) {
-            /** @var TagRepository $tagRepository */
-            $tagRepository = $this->doctrine->getManager()->getRepository(Tag::class);
-            $tag = $tagRepository->getTagByName($tag);
-            $recipie->addTag($tag);
+        if($tags) {
+            foreach ($tags as $tag) {
+                if (!empty($tag)) {
+                    /** @var TagRepository $tagRepository */
+                    $tagRepository = $this->doctrine->getManager()->getRepository(Tag::class);
+                    $tag = $tagRepository->getTagByName($tag);
+                    $recipie->addTag($tag);
+                }
+            }
         }
     }
 
@@ -74,7 +79,13 @@ class RecipieCreator extends AbstractController {
     public function create(Recipie $recipie): bool
     {
         $doctrineManager = $this->doctrine->getManager();
-        $recipie->setUser($this->getUser());
+
+        if(!$this->getUser()) {
+            $apiUser = $doctrineManager->getRepository(User::class)->findOneBy(['username' => 'api']);
+            $recipie->setUser($apiUser);
+        } else {
+            $recipie->setUser($this->getUser());
+        }
 
         $newFileName = $this->imageCreator->create($recipie->getPhoto());
 
