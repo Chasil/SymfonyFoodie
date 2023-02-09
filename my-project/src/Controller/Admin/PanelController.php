@@ -4,14 +4,12 @@ namespace App\Controller\Admin;
 
 use App\Entity\Recipie;
 use App\Form\AddRecipieType;
-use App\Serializer\RecipieCollection;
-use App\Service\RecipieCreator;
+use App\Service\RecipieCreatorLauncher;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class PanelController extends AbstractController
 {
@@ -31,33 +29,18 @@ class PanelController extends AbstractController
     #[Route('/panel', name: 'save', methods: ['POST'])]
     public function saveRecipie(
         Request $request,
-        RecipieCreator $recipieCreator,
-        SerializerInterface $serializer,
-        ManagerRegistry $doctrine
+        RecipieCreatorLauncher $launcher
     ): Response {
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();
 
-        if(!str_contains($apiURL, self::DOMAIN_NAME)) {
-            $this->addFlash('error', 'Invalid URL domain.');
+        if(str_contains($apiURL, self::DOMAIN_NAME)) {
+            $createRecipie = $launcher->launch($apiURL);
+            $this->addFlash('notice', $createRecipie['created'] . ' recipies created');
+            $this->addFlash('error', $createRecipie['existed'] . ' recipies exist');
         } else {
-            $jsonData = file_get_contents($apiURL);
-
-            /** @var RecipieCollection $recipieCollection */
-            $recipieCollection = $serializer->deserialize($jsonData, RecipieCollection::class, 'json');
-
-            foreach ($recipieCollection->getMeals() as $serializedRecipie) {
-                if($doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
-                    $this->addFlash('error', 'Recipie exists.');
-                } else {
-                    $recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
-                    $recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
-                    $recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
-                    $recipieCreator->create($serializedRecipie->getRecipie());
-                    $this->addFlash('notice', 'Saved succeeded');
-                }
-            }
+            $this->addFlash('error', 'Invalid URL domain.');
         }
 
         return $this->redirectToRoute('admin_panel');

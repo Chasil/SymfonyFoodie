@@ -2,16 +2,12 @@
 
 namespace App\Command;
 
-use App\Entity\Recipie;
-use App\Serializer\RecipieCollection;
-use App\Service\RecipieCreator;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Service\RecipieCreatorLauncher;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(name: 'app:get-api-recipies')]
 class GetApiRecipies extends Command
@@ -19,9 +15,7 @@ class GetApiRecipies extends Command
     private const API_LINK = 'https://www.themealdb.com/api/json/v1/1/search.php?f=';
 
     public function __construct(
-        private SerializerInterface $serializer,
-        private ManagerRegistry $doctrine,
-        private RecipieCreator $recipieCreator
+        private RecipieCreatorLauncher $launcher
     ) {
         parent::__construct();
     }
@@ -39,21 +33,12 @@ class GetApiRecipies extends Command
             return $letter;
         });
 
-        $jsonData = file_get_contents(self::API_LINK . $letter);
+        $apiURL = self::API_LINK . $letter;
 
-        $recipieCollection = $this->serializer->deserialize($jsonData, RecipieCollection::class, 'json');
+        $createRecipie = $this->launcher->launch($apiURL);
+        $output->writeln($createRecipie['created'] . ' recipies added.');
+        $output->writeln($createRecipie['existed'] . ' recipies exist.');
 
-        foreach($recipieCollection->getMeals() as $serializedRecipie) {
-            if(!$this->doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
-                $this->recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
-                $this->recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
-                $this->recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
-                $this->recipieCreator->create($serializedRecipie->getRecipie());
-                $output->writeln('Recipie added.');
-            } else {
-                $output->writeln('Recipie exists.');
-            }
-        }
         return Command::SUCCESS;
     }
 }

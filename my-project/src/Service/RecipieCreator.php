@@ -76,7 +76,7 @@ class RecipieCreator extends AbstractController {
      * @param Recipie $recipie
      * @return bool
      */
-    public function create(Recipie $recipie): bool
+    public function create(Recipie $recipie): void
     {
         $doctrineManager = $this->doctrine->getManager();
 
@@ -93,7 +93,5 @@ class RecipieCreator extends AbstractController {
 
         $doctrineManager->persist($recipie);
         $doctrineManager->flush();
-
-        return true;
     }
 }
