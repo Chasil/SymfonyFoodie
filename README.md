@@ -41,3 +41,12 @@ Celem projektu rozgrzewkowego jest spokojne rozpoczęcie współpracy i wdrożen
 * https://www.themealdb.com/api/json/v1/1/search.php?s=Pad See Ew
 * https://www.themealdb.com/api/json/v1/1/search.php?s=Burek
 * https://www.themealdb.com/api/json/v1/1/search.php?s=Flamiche
+
+### Pobieranie danych z API z CLI ###
+* Funkcjonalność pozwala na pobranie wszystkich przepisów, których nie posiadamy, z danej litery alfabetu na raz:
+
+```
+php bin/console api:get-api-recipies
+```
+
+* po odpaleniu funkcja poprosi o podanie litery, po której zaciągnie przepisy z podsumowaniem o ilości pobrany
