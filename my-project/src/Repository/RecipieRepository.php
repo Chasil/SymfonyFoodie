@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Recipie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,21 +40,34 @@ class RecipieRepository extends ServiceEntityRepository
         }
     }
 
-    public function getByCategoryName(string $categoryName, int $perPage = null, int $offset = null, bool $count = null): array
+    private function joinCategories(QueryBuilder $query, string $categoryName): QueryBuilder
     {
-        $query = $this->createQueryBuilder('r');
-
-        if($count) {
-            $query->select('count(r)');
-        } else {
-            $query->setMaxResults($perPage);
-            $query->setFirstResult($offset);
-        }
-        $query
+        return $query
             ->join('r.categories', 'rc', 'WITH', 'rc.name = ?1')
             ->where('r.isVisible = 1')
             ->setParameter(1, $categoryName);
+    }
 
-        return $query->getQuery()->execute();
+    public function getByCategoryName(string $categoryName,  int $perPage = null, int $offset = null): array
+    {
+        return $this->joinCategories(
+            $this->createQueryBuilder('r')
+            ->setMaxResults($perPage)
+            ->setFirstResult($offset),
+            $categoryName
+        )
+        ->getQuery()
+        ->execute();
+    }
+
+    public function countByCategoryName(string $categoryName): int
+    {
+        return $this->joinCategories(
+            $this->createQueryBuilder('r')
+            ->select('count(r)'),
+            $categoryName
+        )
+        ->getQuery()
+        ->getSingleScalarResult();
     }
 }
