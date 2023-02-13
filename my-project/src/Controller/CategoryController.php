@@ -4,11 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Recipie;
-use App\Repository\CategoryRepository;
 use App\Repository\RecipieRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,20 +18,17 @@ class CategoryController extends AbstractController
         $perPage = 5;
 
         $recipieRepository = $doctrine->getRepository(Recipie::class);
-        $recipies = $recipieRepository->count(['categories' => new ArrayCollection([$category])]);
+        /** @var RecipieRepository $recipieRepository */
+        $recipies = $recipieRepository->getByCategoryName($category->getName(), null, null, true);
+        dd($recipies[0]);
 
-        $pageCount = $recipies->count(['isVisible' => 1]) / $perPage;
+        $pageCount = count($recipies) / $perPage;
 
         if ($page - 1 > $pageCount) {
             throw new \Exception();
         }
 
-        $pagedRecipies = $recipieRepository->findBy(
-            ['category_id' => $category->getId(), 'isVisible' => 1],
-            null,
-            $perPage,
-            $perPage * ($page-1)
-        );
+        $pagedRecipies = $recipieRepository->getByCategoryName($category->getName(), $perPage, $perPage * ($page-1));
 
         return $this->render('category/index.html.twig', [
             'recipies' => $pagedRecipies,

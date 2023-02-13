@@ -38,4 +38,22 @@ class RecipieRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getByCategoryName(string $categoryName, int $perPage = null, int $offset = null, bool $count = null): array
+    {
+        $query = $this->createQueryBuilder('r');
+
+        if($count) {
+            $query->select('count(r)');
+        } else {
+            $query->setMaxResults($perPage);
+            $query->setFirstResult($offset);
+        }
+        $query
+            ->join('r.categories', 'rc', 'WITH', 'rc.name = ?1')
+            ->where('r.isVisible = 1')
+            ->setParameter(1, $categoryName);
+
+        return $query->getQuery()->execute();
+    }
 }
