@@ -36,9 +36,15 @@ class PanelController extends AbstractController
         $apiURL = $form->get('meal_link')->getData();
 
         if(str_contains($apiURL, self::DOMAIN_NAME)) {
-            $createRecipie = $launcher->launch($apiURL);
-            $this->addFlash('notice', $createRecipie['created'] . ' recipies created');
-            $this->addFlash('error', $createRecipie['existed'] . ' recipies exist');
+            $launcher->launch(
+                $apiURL,
+                function() {
+                    $this->addFlash('notice', 'Recipie created');
+                },
+                function() {
+                    $this->addFlash('error', 'Recipie already exist');
+                },
+            );
         } else {
             $this->addFlash('error', 'Invalid URL domain.');
         }

@@ -16,28 +16,24 @@ class RecipieCreatorLauncher
     ) {
     }
     public function launch(
-        string $apiURL
-    ): array {
+        string $apiURL,
+        callable $callbackOnCreated,
+        callable $callbackOnExisted,
+    ): void {
         $jsonData = file_get_contents($apiURL);
 
         $recipieCollection = $this->serializer->deserialize($jsonData, RecipieCollection::class, 'json');
 
-        $recipiesSummary = [
-            'created' => 0,
-            'existed' => 0
-        ];
         foreach ($recipieCollection->getMeals() as $serializedRecipie) {
             if(!$this->doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
                 $this->recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
                 $this->recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
                 $this->recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
                 $this->recipieCreator->create($serializedRecipie->getRecipie());
-                $recipiesSummary['created'] += 1;
+                $callbackOnCreated();
             } else {
-                $recipiesSummary['existed'] += 1;
+                $callbackOnExisted();
             }
         }
-
-        return $recipiesSummary;
     }
 }

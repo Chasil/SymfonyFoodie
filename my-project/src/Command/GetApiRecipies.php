@@ -26,18 +26,26 @@ class GetApiRecipies extends Command
     ): int {
 
         $io = new SymfonyStyle($input, $output);
-        $letter = $io->ask('Type single letter to get recipies starting with this letters.', 1, function($letter) {
-            if(!preg_match('/^[a-z]$/', $letter)) {
-                throw new \RuntimeException('Value must be a single letter!');
+        $letter = $io->ask(
+            'Type single letter to get recipies starting with this letters.',
+            1,
+            function($letter) {
+                if(!preg_match('/^[a-z]$/', $letter)) {
+                    throw new \RuntimeException('Value must be a single letter!');
+                }
+                return $letter;
             }
-            return $letter;
-        });
+        );
 
-        $apiURL = self::API_LINK . $letter;
-
-        $createRecipie = $this->launcher->launch($apiURL);
-        $output->writeln($createRecipie['created'] . ' recipies added.');
-        $output->writeln($createRecipie['existed'] . ' recipies exist.');
+        $this->launcher->launch(
+            self::API_LINK . $letter,
+            function() use ($output) {
+                $output->writeln('Recipie added.');
+            },
+            function() use ($output){
+                $output->writeln('Recipie already exist.');
+            },
+        );
 
         return Command::SUCCESS;
     }
