@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Recipie;
+use App\Repository\RecipieRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +17,11 @@ class CategoryController extends AbstractController
     {
         $perPage = 5;
         $recipieRepository = $doctrine->getRepository(Recipie::class);
+        /** @var RecipieRepository $recipieRepository */
         $recipies = $recipieRepository->countByCategoryName($category->getName());
 
-        $pageCount = $recipies / $perPage;
-        if ($page - 1 > $pageCount) {
+        $pageCount = ceil($recipies / $perPage);
+        if ($page-1 > $pageCount) {
             throw new \Exception();
         }
 
@@ -28,8 +30,8 @@ class CategoryController extends AbstractController
         return $this->render('category/index.html.twig', [
             'recipies' => $pagedRecipies,
             'category' => $category,
-            'page' => $page,
-            'totalPages' => $pageCount
+            'page' => (int) $page,
+            'totalPages' => (int) $pageCount
         ]);
     }
 }

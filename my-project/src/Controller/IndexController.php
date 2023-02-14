@@ -22,9 +22,9 @@ class IndexController extends AbstractController
         /** @var RecipieRepository $recipieRepository */
         $recipieRepository = $doctrineManager->getRepository(Recipie::class);
         $findCriteria = ['isVisible' => 1];
-        $pageCount = $recipieRepository->count($findCriteria) / $perPage;
+        $pageCount = ceil($recipieRepository->count($findCriteria) / $perPage);
 
-        if ($page - 1 > $pageCount) {
+        if ($page-1 > $pageCount) {
             throw new \Exception();
         }
 
@@ -42,7 +42,7 @@ class IndexController extends AbstractController
             'recipies' => $recipies,
             'categories' => $categories,
             'tags' => $tags,
-            'page' => $page,
+            'page' => (int) $page,
             'totalPages' => $pageCount
         ]);
     }

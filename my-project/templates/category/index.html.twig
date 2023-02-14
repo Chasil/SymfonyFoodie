@@ -43,7 +43,7 @@
                         {% if page is not same as(1) %}
                             <li><a href="{{ path('category', {name: category.name, page: page-1}) }}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Prev</a></li>
                         {%  endif %}
-                        {% if page is not same as(totalPages) %}
+                        {% if page < totalPages %}
                             <li><a href="{{ path('category', {name: category.name, page: page+1}) }}">Next <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
                         {%  endif %}
                     </ol>

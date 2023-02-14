@@ -70,4 +70,35 @@ class RecipieRepository extends ServiceEntityRepository
         ->getQuery()
         ->getSingleScalarResult();
     }
+
+    private function joinTags(QueryBuilder $query, string $tagName): QueryBuilder
+    {
+        return $query
+            ->join('r.tags', 'rt', 'WITH', 'rt.name = ?1')
+            ->where('r.isVisible = 1')
+            ->setParameter(1, $tagName);
+    }
+
+    public function getByTagName(string $tagName,  int $perPage = null, int $offset = null): array
+    {
+        return $this->joinTags(
+            $this->createQueryBuilder('r')
+                ->setMaxResults($perPage)
+                ->setFirstResult($offset),
+            $tagName
+        )
+            ->getQuery()
+            ->execute();
+    }
+
+    public function countByTagName(string $tagName): int
+    {
+        return $this->joinTags(
+            $this->createQueryBuilder('r')
+                ->select('count(r)'),
+            $tagName
+        )
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
