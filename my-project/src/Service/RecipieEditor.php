@@ -21,20 +21,6 @@ class RecipieEditor extends AbstractController {
 
     /**
      * @param Recipie $recipie
-     * @param array<TKey, array{name: string, measure: string}> $ingredients
-     * @return void
-     */
-    public function prepareIngredients(Recipie $recipie, array $ingredients): void
-    {
-        foreach($ingredients as $ingredient => $measure) {
-            $ingredientRepository = $this->doctrine->getManager()->getRepository(Ingredient::class);
-            $ingredient = $ingredientRepository->getIngredientByName($ingredient, $measure);
-            $recipie->addIngredient($ingredient);
-        }
-    }
-
-    /**
-     * @param Recipie $recipie
      * @param array $tags
      * @return void
      */

@@ -3,8 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Recipie;
+use App\Form\AddRecipieType;
 use App\Form\EditRecipieType;
-use App\Service\Manager;
+use App\Service\RecipieCreatorLauncher;
 use App\Service\RecipieEditor;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RecipieController extends AbstractController
 {
+    private const DOMAIN_NAME = 'themealdb.com';
+
     #[Route('/recipie', name: 'admin_recipie')]
     public function index(): Response
     {
@@ -22,7 +25,34 @@ class RecipieController extends AbstractController
         ]);
     }
 
-    #[Route('/recipie/delete/{id}', name: 'delete_recipie')]
+    //TODO przenieść do RecipieController
+    #[Route('/panel', name: 'add_recipie', methods: ['POST'])]
+    public function saveRecipie(
+        Request $request,
+        RecipieCreatorLauncher $launcher
+    ): Response {
+        $form = $this->createForm(AddRecipieType::class);
+        $form->handleRequest($request);
+        $apiURL = $form->get('meal_link')->getData();
+
+        if(str_contains($apiURL, self::DOMAIN_NAME)) {
+            $launcher->launch(
+                $apiURL,
+                function() {
+                    $this->addFlash('notice', 'Recipie created');
+                },
+                function() {
+                    $this->addFlash('error', 'Recipie already exist');
+                },
+            );
+        } else {
+            $this->addFlash('error', 'Invalid URL domain.');
+        }
+
+        return $this->redirectToRoute('admin_panel');
+    }
+
+    #[Route('/recipie/delete/{id}', name: 'delete_recipie', methods: ['GET'])]
     public function delete(Recipie $recipie, ManagerRegistry $doctrine)
     {
         $doctrineManager = $doctrine->getManager();
@@ -37,12 +67,12 @@ class RecipieController extends AbstractController
     }
 
     #[Route('/recipie/edit/{id}', name: 'edit_recipie', methods: ['GET'])]
-    public function edit(Recipie $recipie, ManagerRegistry $doctrine): Response
+    public function edit(Recipie $recipie): Response
     {
         $form = $this->createForm(EditRecipieType::class, $recipie);
 
         return $this->render('recipie/edit.html.twig', [
-            'edit_form' => $form->createView()
+            'editRecipie' => $form->createView()
         ]);
     }
 
@@ -56,6 +86,7 @@ class RecipieController extends AbstractController
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
+        //TODO podzielić na metody w serwisie RecipieEditor
         $recipie->setName($form->get('name')->getData());
         $recipie->setDescription($form->get('description')->getData());
         $recipie->setPreparation($form->get('preparation')->getData());
@@ -73,15 +104,11 @@ class RecipieController extends AbstractController
         $recipieEditor->removeRepetitions($recipie, $tags, $formTags, 'Tag');
         $recipieEditor->prepareTags($recipie, $formTags);
 
-        //TODO zrobienie w ogóle od nowa ładowania ingredients/measures w formularzu,
-        // by to było powiązane 1:1 bo obecne rozwiązanie jest z dupy
-
-        $formIngredients = $form->get('ingredients')->getData();
-        $formMeasures = $form->get('measure')->getData();
-        $ingredients = $recipie->getIngredients();
-        $recipieEditor->removeRepetitions($recipie, $ingredients, $formIngredients, 'Ingredient');
-        $ingredientsWithMeasures = array_combine($formIngredients, $formMeasures);
-        $recipieEditor->prepareIngredients($recipie, $ingredientsWithMeasures);
+//        $formIngredients = $form->get('ingredients')->getData();
+//        $ingredients = $recipie->getIngredients();
+//        $recipieEditor->removeRepetitions($recipie, $ingredients, $formIngredients, 'Ingredient');
+//        $ingredientsWithMeasures = array_combine($formIngredients, $formMeasures);
+//        $recipieEditor->prepareIngredients($recipie, $ingredientsWithMeasures);
 
         $recipieEditor->edit($recipie, $photo);
 

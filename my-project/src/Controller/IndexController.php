@@ -35,13 +35,10 @@ class IndexController extends AbstractController
             $perPage * ($page-1)
         );
 
-        $categories = $doctrineManager->getRepository(Category::class)->findGroupedCategories();
-        $tags = $doctrineManager->getRepository(Tag::class)->findAll();
-
         return $this->render('index/index.html.twig', [
             'recipies' => $recipies,
-            'categories' => $categories,
-            'tags' => $tags,
+            'categories' => $doctrineManager->getRepository(Category::class)->findGroupedCategories(),
+            'tags' => $doctrineManager->getRepository(Tag::class)->findAll(),
             'page' => (int) $page,
             'totalPages' => $pageCount
         ]);

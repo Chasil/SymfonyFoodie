@@ -39,45 +39,26 @@ class IngredientRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @param string $name
-     * @return Ingredient
-     */
-    public function getIngredientByName(string $name, string $measure): Ingredient
+    public function mapFormsToIngredient(array $forms): Ingredient
     {
-        $ingredient = $this->findOneBy(['name' => $name]);
+        $id = $forms['id']->getData();
+        $name = $forms['name']->getData();
+        $measure = $forms['measure']->getData();
 
-        if(!$ingredient) {
-            $ingredient = new Ingredient();
-            $ingredient->setName($name);
-            $ingredient->setMeasure($measure);
-            $this->getEntityManager()->persist($ingredient);
+        if ($id) {
+            $viewData = $this->findOneBy(['id' => $id]);
+        } else {
+            $viewData = new Ingredient();
+            $this->getEntityManager()->persist($viewData);
         }
-        return $ingredient;
+
+        if(!$name) {
+            $this->getEntityManager()->remove($viewData);
+        } else {
+            $viewData->setName($name);
+            $viewData->setMeasure($measure);
+        }
+
+        return $viewData;
     }
-
-//    /**
-//     * @return Ingredient[] Returns an array of Ingredient objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Ingredient
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

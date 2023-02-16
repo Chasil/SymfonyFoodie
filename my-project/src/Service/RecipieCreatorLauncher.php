@@ -20,6 +20,7 @@ class RecipieCreatorLauncher
         callable $callbackOnCreated,
         callable $callbackOnExisted,
     ): void {
+        //TODO zastąpić z https://symfony.com/doc/current/http_client.html
         $jsonData = file_get_contents($apiURL);
 
         $recipieCollection = $this->serializer->deserialize($jsonData, RecipieCollection::class, 'json');

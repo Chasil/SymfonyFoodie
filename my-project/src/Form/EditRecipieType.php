@@ -3,8 +3,10 @@ namespace App\Form;
 
 use App\Entity\Recipie;
 use App\Form\Field\ArrayType;
+use App\Form\Field\IngredientType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -20,6 +22,7 @@ class EditRecipieType extends AbstractType
 
         $categoriesValues = $options['data']->getCategory();
 
+        //TODO zrobić przez mapowanie jak ingredients
         $categories = [];
         foreach($categoriesValues as $categoriesValue) {
             $categories[] = $categoriesValue->getName();
@@ -32,13 +35,7 @@ class EditRecipieType extends AbstractType
             $tags[] = $tagsValue->getName();
         }
 
-        $ingredientsValues = $options['data']->getIngredients();
-
-        $ingredients = [];
-        foreach($ingredientsValues as $key => $ingredientsValue) {
-            $ingredients['name'][$key] = $ingredientsValue->getName();
-            $ingredients['measure'][$key] = $ingredientsValue->getMeasure();
-        }
+        $ingredients = $options['data']->getIngredients();
 
         $builder
             ->add('name', TextType::class, ['attr' => ['maxlength' => 255]])
@@ -59,10 +56,17 @@ class EditRecipieType extends AbstractType
                 ]
             ])
             ->add('tags', ArrayType::class, ['mapped' => false, 'data' => $tags])
-            ->add('ingredients', ArrayType::class, ['mapped' => false, 'data' => $ingredients['name']])
-            ->add('measure', ArrayType::class, ['mapped' => false, 'data' => $ingredients['measure']])
+            ->add('ingredients', CollectionType::class, [
+                'data' => $ingredients,
+                'entry_type' => IngredientType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference'  => false
+            ])
             ->add('save', SubmitType::class)
         ;
+
+        //todo ustyawić by domyślnie nie wyświetlało ingredients bo jest manualnie wyciągnięte w widoku
     }
 
     public function configureOptions(OptionsResolver $resolver): void

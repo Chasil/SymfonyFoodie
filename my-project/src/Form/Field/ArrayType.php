@@ -10,6 +10,8 @@ class ArrayType extends TextType
 {
     use HandleArrayInput;
 
+    //TODO utworzyć klasę Handlers/HandleArrayInput i wstrzykiwać do konkstruktora
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addViewTransformer($this);

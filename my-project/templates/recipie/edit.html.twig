@@ -1,5 +1,34 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery(document).ready(function() {
+            var $wrapper = $('.js-ingredients-wrapper');
+            $wrapper.on('click', '.js-remove-scientist', function(e) {
+                e.preventDefault();
+                $(this).closest('.js-ingredients-item')
+                    .fadeOut()
+                    .remove();
+            });
+            $wrapper.on('click', '.js-ingredients-add', function(e) {
+                e.preventDefault();
+                // Get the data-prototype explained earlier
+                var prototype = $wrapper.data('prototype');
+                // get the new index
+                var index = $wrapper.data('index');
+                // Replace '__name__' in the prototype's HTML to
+                // instead be a number based on how many items we have
+                var newForm = prototype.replace(/__name__/g, index);
+                // increase the index with one for the next item
+                $wrapper.data('index', index + 1);
+                // Display the form in the page before the "new" link
+                $(this).before(newForm);
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block title %}Edit Recipie{% endblock %}
 
 {% block content %}
@@ -13,8 +42,28 @@
             </div>
         {% endfor %}
 
-        {{ form_start(edit_form) }}
-        {{ form_end(edit_form) }}
+        {{ form_start(editRecipie) }}
+
+        <div class="row js-ingredients-wrapper"
+             data-prototype="{{ form_widget(editRecipie.ingredients.vars.prototype)|e('html_attr') }}"
+             data-index="{{ editRecipie.ingredients|length }}"
+        >
+            {% for ingredient in editRecipie.ingredients %}
+                <div class="col-xs-4 js-ingredients-item">
+                    <a href="#" class="js-remove-scientist pull-right">
+                        <span class="fa fa-close"></span>
+                    </a>
+                    {{ form_errors(ingredient) }}
+                    {{ form_row(ingredient.name) }}
+                    {{ form_row(ingredient.measure) }}
+                </div>
+            {% endfor %}
+            <a href="#" class="js-ingredients-add">
+                <span class="fa fa-plus-circle"></span>
+                Add Another Ingredient
+            </a>
+        </div>
+        {{ form_end(editRecipie) }}
 
     </section>
 {% endblock %}
