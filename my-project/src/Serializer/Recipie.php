@@ -69,7 +69,7 @@ class Recipie
 
     public function getTag(): ?array
     {
-        if($this->tag) {
+        if ($this->tag) {
             return $this->transformStringToArray($this->tag);
         } else {
             return $this->tag;

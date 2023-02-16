@@ -39,6 +39,19 @@ class IngredientRepository extends ServiceEntityRepository
         }
     }
 
+    public function getIngredientByName(string $name, string $measure): Ingredient
+    {
+        $ingredient = $this->findOneBy(['name' => $name]);
+
+        if (!$ingredient) {
+            $ingredient = new Ingredient();
+            $ingredient->setName($name);
+            $ingredient->setMeasure($measure);
+            $this->getEntityManager()->persist($ingredient);
+        }
+        return $ingredient;
+    }
+
     public function mapFormsToIngredient(array $forms): Ingredient
     {
         $id = $forms['id']->getData();
@@ -46,19 +59,30 @@ class IngredientRepository extends ServiceEntityRepository
         $measure = $forms['measure']->getData();
 
         if ($id) {
-            $viewData = $this->findOneBy(['id' => $id]);
+            $ingredient = $this->findOneBy(['id' => $id]);
         } else {
-            $viewData = new Ingredient();
-            $this->getEntityManager()->persist($viewData);
+            $ingredient = new Ingredient();
+            $this->getEntityManager()->persist($ingredient);
         }
 
-        if(!$name) {
-            $this->getEntityManager()->remove($viewData);
-        } else {
-            $viewData->setName($name);
-            $viewData->setMeasure($measure);
-        }
+        $this->removeDeleted($ingredient, $name, $measure);
 
-        return $viewData;
+        return $ingredient;
     }
+
+    private function removeDeleted(Ingredient $ingredient, string $name, string $measure): void
+    {
+        if (!$name) {
+            $this->getEntityManager()->remove($ingredient);
+        } else {
+            $this->addOrUpdate($ingredient, $name, $measure);
+        }
+    }
+
+    private function addOrUpdate(Ingredient $ingredient, string $name, string $measure): void
+    {
+        $ingredient->setName($name);
+        $ingredient->setMeasure($measure);
+    }
+
 }

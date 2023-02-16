@@ -25,7 +25,6 @@ class RecipieController extends AbstractController
         ]);
     }
 
-    //TODO przenieść do RecipieController
     #[Route('/panel', name: 'add_recipie', methods: ['POST'])]
     public function saveRecipie(
         Request $request,
@@ -35,8 +34,9 @@ class RecipieController extends AbstractController
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();
 
-        if(str_contains($apiURL, self::DOMAIN_NAME)) {
-            $launcher->launch(
+        //todo zobaczyć czy jakoś lepiej się tego fragmentu nie da zrobić
+        if (str_contains($apiURL, self::DOMAIN_NAME)) {
+            $apiResult = $launcher->launch(
                 $apiURL,
                 function() {
                     $this->addFlash('notice', 'Recipie created');
@@ -45,6 +45,9 @@ class RecipieController extends AbstractController
                     $this->addFlash('error', 'Recipie already exist');
                 },
             );
+            if (!$apiResult) {
+                $this->addFlash('error', 'Recipie does not exist');
+            }
         } else {
             $this->addFlash('error', 'Invalid URL domain.');
         }
@@ -57,7 +60,7 @@ class RecipieController extends AbstractController
     {
         $doctrineManager = $doctrine->getManager();
 
-        if($this->getUser() == $recipie->getUser()) {
+        if ($this->getUser() == $recipie->getUser()) {
             $doctrineManager->remove($recipie);
             $doctrineManager->flush();
             $this->addFlash('deleted', 'Deleted successfully');
@@ -86,31 +89,11 @@ class RecipieController extends AbstractController
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
-        //TODO podzielić na metody w serwisie RecipieEditor
-        $recipie->setName($form->get('name')->getData());
-        $recipie->setDescription($form->get('description')->getData());
-        $recipie->setPreparation($form->get('preparation')->getData());
-        $recipie->setIsVisible($form->get('isVisible')->getData());
-        $recipie->setUser($this->getUser());
-        $photo = $form->get('photo')->getData();
+        $recipieEditor->prepareFormData($recipie, $form);
+        $recipieEditor->prepareCategories($recipie, $form->get('category')->getData());
+        $recipieEditor->prepareTags($recipie, $form->get('tags')->getData());
 
-        $formCategories = $form->get('category')->getData();
-        $categories = $recipie->getCategory();
-        $recipieEditor->removeRepetitions($recipie, $categories, $formCategories, 'Category');
-        $recipieEditor->prepareCategories($recipie, $formCategories);
-
-        $formTags = $form->get('tags')->getData();
-        $tags = $recipie->getTags();
-        $recipieEditor->removeRepetitions($recipie, $tags, $formTags, 'Tag');
-        $recipieEditor->prepareTags($recipie, $formTags);
-
-//        $formIngredients = $form->get('ingredients')->getData();
-//        $ingredients = $recipie->getIngredients();
-//        $recipieEditor->removeRepetitions($recipie, $ingredients, $formIngredients, 'Ingredient');
-//        $ingredientsWithMeasures = array_combine($formIngredients, $formMeasures);
-//        $recipieEditor->prepareIngredients($recipie, $ingredientsWithMeasures);
-
-        $recipieEditor->edit($recipie, $photo);
+        $recipieEditor->edit($recipie, $form->get('photo')->getData());
 
         $this->addFlash('notice', 'Saved succeeded');
 

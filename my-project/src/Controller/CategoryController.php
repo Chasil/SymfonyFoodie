@@ -15,6 +15,7 @@ class CategoryController extends AbstractController
     #[Route('/category/{name}/{page}', name: 'category', requirements: ['page' => '\d+'])]
     public function index(ManagerRegistry $doctrine, Category $category, $page = 1): Response
     {
+        //todo paginator
         $perPage = 5;
         $recipieRepository = $doctrine->getRepository(Recipie::class);
         /** @var RecipieRepository $recipieRepository */

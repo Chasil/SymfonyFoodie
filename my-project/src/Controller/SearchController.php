@@ -16,7 +16,7 @@ class SearchController extends AbstractController
     {
         $recipies = [];
         $searchedValue = $request->query->get('search', '');
-        if($searchedValue) {
+        if ($searchedValue) {
             $doctrineManager = $doctrine->getManager();
             $recipies = $doctrineManager->getRepository(Recipie::class)->findBy(['name' => $searchedValue]);
         }

@@ -28,7 +28,7 @@ class RecipieCreator extends AbstractController {
         $doctrineManager = $this->doctrine->getManager();
 
         foreach($ingredients as $ingredient) {
-            if(!empty($ingredient['name'] || !empty($ingredient['measure']))) {
+            if (!empty($ingredient['name'] || !empty($ingredient['measure']))) {
                 /** @var IngredientRepository $ingredientRepository */
                 $ingredientRepository = $doctrineManager->getRepository(Ingredient::class);
                 $ingredient = $ingredientRepository->getIngredientByName($ingredient['name'], $ingredient['measure']);
@@ -47,7 +47,7 @@ class RecipieCreator extends AbstractController {
         ?array $tags
     ): void
     {
-        if($tags) {
+        if ($tags) {
             foreach ($tags as $tag) {
                 if (!empty($tag)) {
                     /** @var TagRepository $tagRepository */
@@ -80,7 +80,7 @@ class RecipieCreator extends AbstractController {
     {
         $doctrineManager = $this->doctrine->getManager();
 
-        if(!$this->getUser()) {
+        if (!$this->getUser()) {
             $apiUser = $doctrineManager->getRepository(User::class)->findOneBy(['username' => 'api']);
             $recipie->setUser($apiUser);
         } else {

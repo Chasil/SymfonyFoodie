@@ -30,7 +30,7 @@ class GetApiRecipies extends Command
             'Type single letter to get recipies starting with this letters.',
             1,
             function($letter) {
-                if(!preg_match('/^[a-z]$/', $letter)) {
+                if (!preg_match('/^[a-z]$/', $letter)) {
                     throw new \RuntimeException('Value must be a single letter!');
                 }
                 return $letter;

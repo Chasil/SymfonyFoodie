@@ -47,7 +47,7 @@ class CategoryRepository extends ServiceEntityRepository
     {
         $category = $this->findOneBy(['name' => $name]);
 
-        if(!$category) {
+        if (!$category) {
             $category = new Category();
             $category->setName($name);
             $this->getEntityManager()->persist($category);

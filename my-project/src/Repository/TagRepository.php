@@ -50,7 +50,7 @@ class TagRepository extends ServiceEntityRepository
     {
         $tag = $this->getEntityManager()->getRepository(Tag::class)->findOneBy(['name' => $name]);
 
-        if(!$tag) {
+        if (!$tag) {
             $tag = new Tag();
             $tag->setName($name);
         }
@@ -66,7 +66,7 @@ class TagRepository extends ServiceEntityRepository
     {
         $tag = $this->findOneBy(['name' => $name]);
 
-        if(!$tag) {
+        if (!$tag) {
             $tag = new Tag();
             $tag->setName($name);
             $this->getEntityManager()->persist($tag);

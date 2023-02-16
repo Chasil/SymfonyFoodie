@@ -3,14 +3,13 @@
 namespace App\Service;
 
 use App\Entity\Category;
-use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
 use App\Repository\TagRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class RecipieEditor extends AbstractController {
@@ -21,15 +20,34 @@ class RecipieEditor extends AbstractController {
 
     /**
      * @param Recipie $recipie
+     * @param Form $form
+     * @return void
+     */
+    public function prepareFormData(
+        Recipie $recipie,
+        Form $form
+    ): void
+    {
+        $recipie->setName($form->get('name')->getData());
+        $recipie->setDescription($form->get('description')->getData());
+        $recipie->setPreparation($form->get('preparation')->getData());
+        $recipie->setIsVisible($form->get('isVisible')->getData());
+        $recipie->setUser($this->getUser());
+    }
+
+    /**
+     * @param Recipie $recipie
      * @param array $tags
      * @return void
      */
     public function prepareTags(
         Recipie $recipie,
-        array $tags
+        array $formTags
     ): void
     {
-        foreach($tags as $tag) {
+        $tags = $recipie->getTags();
+        $this->removeRepetitions($recipie, $tags, $formTags, 'Tag');
+        foreach($formTags as $tag) {
             /** @var TagRepository $tagRepository */
             $tagRepository = $this->doctrine->getManager()->getRepository(Tag::class);
             $tag = $tagRepository->getTagByName($tag);
@@ -42,9 +60,11 @@ class RecipieEditor extends AbstractController {
      * @param array $categories
      * @return void
      */
-    public function prepareCategories(Recipie $recipie, array $categories): void
+    public function prepareCategories(Recipie $recipie, array $formCategories): void
     {
-        foreach($categories as $category) {
+        $categories = $recipie->getCategory();
+        $this->removeRepetitions($recipie, $categories, $formCategories, 'Category');
+        foreach($formCategories as $category) {
             $categoryRepository = $this->doctrine->getManager()->getRepository(Category::class);
             $categoryEntity = $categoryRepository->getCategoryByName($category);
             $recipie->addCategory($categoryEntity);
