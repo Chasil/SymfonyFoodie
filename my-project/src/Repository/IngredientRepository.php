@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Ingredient;
+use App\Entity\RecipieFieldCollection;
+use App\Form\Field\RecipieCollectionFieldType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,8 +16,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Ingredient[]    findAll()
  * @method Ingredient[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IngredientRepository extends ServiceEntityRepository
+class IngredientRepository extends RecipieCollectionFieldRepository
 {
+    protected const className = Ingredient::class;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Ingredient::class);
@@ -52,37 +56,14 @@ class IngredientRepository extends ServiceEntityRepository
         return $ingredient;
     }
 
-    public function mapFormsToIngredient(array $forms): Ingredient
+    public function mapFormsToEntity(array $forms): RecipieFieldCollection
     {
-        $id = $forms['id']->getData();
-        $name = $forms['name']->getData();
+        /** @var Ingredient $entity */
+        $entity = parent::mapFormsToEntity($forms);
         $measure = $forms['measure']->getData();
+        $entity->setMeasure($measure);
 
-        if ($id) {
-            $ingredient = $this->findOneBy(['id' => $id]);
-        } else {
-            $ingredient = new Ingredient();
-            $this->getEntityManager()->persist($ingredient);
-        }
-
-        $this->removeDeleted($ingredient, $name, $measure);
-
-        return $ingredient;
-    }
-
-    private function removeDeleted(Ingredient $ingredient, string $name, string $measure): void
-    {
-        if (!$name) {
-            $this->getEntityManager()->remove($ingredient);
-        } else {
-            $this->addOrUpdate($ingredient, $name, $measure);
-        }
-    }
-
-    private function addOrUpdate(Ingredient $ingredient, string $name, string $measure): void
-    {
-        $ingredient->setName($name);
-        $ingredient->setMeasure($measure);
+        return $entity;
     }
 
 }

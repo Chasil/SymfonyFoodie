@@ -37,65 +37,6 @@ class RecipieEditor extends AbstractController {
 
     /**
      * @param Recipie $recipie
-     * @param array $tags
-     * @return void
-     */
-    public function prepareTags(
-        Recipie $recipie,
-        array $formTags
-    ): void
-    {
-        $tags = $recipie->getTags();
-        $this->removeRepetitions($recipie, $tags, $formTags, 'Tag');
-        foreach($formTags as $tag) {
-            /** @var TagRepository $tagRepository */
-            $tagRepository = $this->doctrine->getManager()->getRepository(Tag::class);
-            $tag = $tagRepository->getTagByName($tag);
-            $recipie->addTag($tag);
-        }
-    }
-
-    /**
-     * @param Recipie $recipie
-     * @param array $categories
-     * @return void
-     */
-    public function prepareCategories(Recipie $recipie, array $formCategories): void
-    {
-        $categories = $recipie->getCategory();
-        $this->removeRepetitions($recipie, $categories, $formCategories, 'Category');
-        foreach($formCategories as $category) {
-            $categoryRepository = $this->doctrine->getManager()->getRepository(Category::class);
-            $categoryEntity = $categoryRepository->getCategoryByName($category);
-            $recipie->addCategory($categoryEntity);
-        }
-    }
-
-    /**
-     * @param Recipie $recipie
-     * @param Collection $validatedElements
-     * @param array $validArray
-     * @param string $collectionName
-     * @return void
-     */
-    public function removeRepetitions(
-        Recipie $recipie,
-        Collection $validatedElements,
-        array $validArray,
-        string $collectionName
-    ): void
-    {
-        $functionName = 'remove' . $collectionName;
-        foreach ($validatedElements as $validatedElement) {
-            $name = $validatedElement->getName();
-            if (!in_array($name, $validArray)) {
-                $recipie->$functionName($validatedElement);
-            }
-        }
-    }
-
-    /**
-     * @param Recipie $recipie
      * @param UploadedFile|null $photo
      * @return bool
      */

@@ -2,12 +2,8 @@
 
 namespace App\Serializer;
 
-use App\HandleArrayInput;
-
 class Recipie
 {
-    use HandleArrayInput;
-
     private const INGREDIENT_NAME_KEY = 'strIngredient';
     private const INGREDIENT_MEASURE_KEY = 'strMeasure';
     private array $ingredients = [];
@@ -90,5 +86,13 @@ class Recipie
             $ingredientKey = str_replace(self::INGREDIENT_MEASURE_KEY, '', $name);
             $this->ingredients[$ingredientKey]['measure'] = $value;
         }
+    }
+
+    public function transformStringToArray(string $data): array
+    {
+        return array_map(
+            'trim',
+            explode(",", $data)
+        );
     }
 }

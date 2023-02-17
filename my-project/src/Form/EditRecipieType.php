@@ -2,7 +2,8 @@
 namespace App\Form;
 
 use App\Entity\Recipie;
-use App\Form\Field\ArrayType;
+use App\Form\Field\CategoryTextType;
+use App\Form\Field\TagTextType;
 use App\Form\Field\IngredientType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -14,33 +15,28 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Length;
 
 class EditRecipieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
-        $categoriesValues = $options['data']->getCategory();
-
-        //TODO zrobić przez mapowanie jak ingredients
-        $categories = [];
-        foreach($categoriesValues as $categoriesValue) {
-            $categories[] = $categoriesValue->getName();
-        }
-
-        $tagsValues = $options['data']->getTags();
-
-        $tags = [];
-        foreach($tagsValues as $tagsValue) {
-            $tags[] = $tagsValue->getName();
-        }
-
-        $ingredients = $options['data']->getIngredients();
-
+        //todo czemu category a nie categories? jak zmienię to mam błąd
         $builder
-            ->add('name', TextType::class, ['attr' => ['maxlength' => 255]])
+            ->add('name', TextType::class, [
+                'attr' => ['maxlength' => 255],
+                'constraints' => [
+                    new Length(['min' => 3])
+                ]
+            ])
             ->add('description',TextareaType::class, ['attr' => ['maxlength' => 1000]])
-            ->add('category', ArrayType::class, ['mapped' => false, 'data' => $categories])
+            ->add('category', CollectionType::class, [
+                'data' => $options['data']->getCategory(),
+                'entry_type' => CategoryTextType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference'  => false,
+            ])
             ->add('preparation',TextareaType::class, ['attr' => ['maxlength' => 10000]])
             ->add('isVisible', CheckboxType::class)
             ->add('photo', FileType::class, [
@@ -55,9 +51,15 @@ class EditRecipieType extends AbstractType
                     ])
                 ]
             ])
-            ->add('tags', ArrayType::class, ['mapped' => false, 'data' => $tags])
+            ->add('tags', CollectionType::class, [
+                'data' => $options['data']->getTags(),
+                'entry_type' => TagTextType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference'  => false,
+            ])
             ->add('ingredients', CollectionType::class, [
-                'data' => $ingredients,
+                'data' => $options['data']->getIngredients(),
                 'entry_type' => IngredientType::class,
                 'allow_add' => true,
                 'allow_delete' => true,

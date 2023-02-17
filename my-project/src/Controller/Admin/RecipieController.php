@@ -58,12 +58,12 @@ class RecipieController extends AbstractController
     #[Route('/recipie/delete/{id}', name: 'delete_recipie', methods: ['GET'])]
     public function delete(Recipie $recipie, ManagerRegistry $doctrine)
     {
-        $doctrineManager = $doctrine->getManager();
-
         if ($this->getUser() == $recipie->getUser()) {
-            $doctrineManager->remove($recipie);
-            $doctrineManager->flush();
+            $doctrine->getManager()->remove($recipie);
+            $doctrine->getManager()->flush();
             $this->addFlash('deleted', 'Deleted successfully');
+        } else {
+            $this->addFlash('deleted', 'No User permission to delete');
         }
 
         return $this->redirectToRoute('admin_panel');
@@ -73,7 +73,6 @@ class RecipieController extends AbstractController
     public function edit(Recipie $recipie): Response
     {
         $form = $this->createForm(EditRecipieType::class, $recipie);
-
         return $this->render('recipie/edit.html.twig', [
             'editRecipie' => $form->createView()
         ]);
@@ -90,9 +89,6 @@ class RecipieController extends AbstractController
         $form->handleRequest($request);
 
         $recipieEditor->prepareFormData($recipie, $form);
-        $recipieEditor->prepareCategories($recipie, $form->get('category')->getData());
-        $recipieEditor->prepareTags($recipie, $form->get('tags')->getData());
-
         $recipieEditor->edit($recipie, $form->get('photo')->getData());
 
         $this->addFlash('notice', 'Saved succeeded');

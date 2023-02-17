@@ -6,7 +6,7 @@ use App\Repository\IngredientRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: IngredientRepository::class)]
-class Ingredient
+class Ingredient implements RecipieFieldCollection
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
