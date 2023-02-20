@@ -69,17 +69,8 @@ class RecipieController extends AbstractController
         return $this->redirectToRoute('admin_panel');
     }
 
-    #[Route('/recipie/edit/{id}', name: 'edit_recipie', methods: ['GET'])]
-    public function edit(Recipie $recipie): Response
-    {
-        $form = $this->createForm(EditRecipieType::class, $recipie);
-        return $this->render('recipie/edit.html.twig', [
-            'editRecipie' => $form->createView()
-        ]);
-    }
-
-    #[Route('/recipie/edit/{id}', name: 'save_recipie', methods: ['POST'])]
-    public function saveEdition(
+    #[Route('/recipie/edit/{id}', name: 'edit_recipie', methods: ['GET', 'POST'])]
+    public function edit(
         Recipie $recipie,
         Request $request,
         RecipieEditor $recipieEditor
@@ -88,11 +79,17 @@ class RecipieController extends AbstractController
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
-        $recipieEditor->prepareFormData($recipie, $form);
-        $recipieEditor->edit($recipie, $form->get('photo')->getData());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $recipieEditor->edit($recipie, $form);
+            $this->addFlash('notice', 'Saved succeeded');
 
-        $this->addFlash('notice', 'Saved succeeded');
+            return $this->redirectToRoute('edit_recipie', ['id' => $recipie->getId()]);
+        }
 
-        return $this->redirectToRoute('edit_recipie', ['id' => $recipie->getId()]);
+        return $this->render('recipie/edit.html.twig', [
+            'editRecipie' => $form->createView()
+        ]);
+
+
     }
 }

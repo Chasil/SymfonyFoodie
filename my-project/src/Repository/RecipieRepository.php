@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Recipie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -60,15 +61,14 @@ class RecipieRepository extends ServiceEntityRepository
         ->execute();
     }
 
-    public function countByCategoryName(string $categoryName): int
+    public function queryByCategoryName(string $categoryName): Query
     {
         return $this->joinCategories(
             $this->createQueryBuilder('r')
-            ->select('count(r)'),
+            ->select('r'),
             $categoryName
         )
-        ->getQuery()
-        ->getSingleScalarResult();
+        ->getQuery();
     }
 
     private function joinTags(QueryBuilder $query, string $tagName): QueryBuilder
@@ -91,14 +91,13 @@ class RecipieRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function countByTagName(string $tagName): int
+    public function queryByTagName(string $tagName): Query
     {
         return $this->joinTags(
             $this->createQueryBuilder('r')
-                ->select('count(r)'),
+                ->select('r'),
             $tagName
         )
-            ->getQuery()
-            ->getSingleScalarResult();
+        ->getQuery();
     }
 }

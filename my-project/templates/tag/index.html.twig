@@ -14,7 +14,7 @@
                 <div class="col-12 col-lg-8">
                     <div class="blog-posts-area">
 
-                        {% for recipie in recipies %}
+                        {% for recipie in recipiesPagination %}
                             <!-- Single Blog Post -->
                             <div class="single-blog-post d-flex flex-wrap mt-50">
                                 <!-- Thumbnail -->
@@ -40,12 +40,10 @@
 
                     <!-- Pager -->
                     <ol class="foode-pager mt-50">
-                        {% if page is not same as(1) %}
-                            <li><a href="{{ path('tag', {name: tag.name, page: page-1}) }}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Prev</a></li>
-                        {%  endif %}
-                        {% if page < totalPages %}
-                            <li><a href="{{ path('tag', {name: tag.name, page: page+1}) }}">Next <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a></li>
-                        {%  endif %}
+                        {# display navigation #}
+                        <div class="navigation">
+                            {{ knp_pagination_render(recipiesPagination) }}
+                        </div>
                     </ol>
                 </div>
 

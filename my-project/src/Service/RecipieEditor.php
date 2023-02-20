@@ -2,15 +2,10 @@
 
 namespace App\Service;
 
-use App\Entity\Category;
 use App\Entity\Recipie;
-use App\Entity\Tag;
-use App\Repository\TagRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Form\FormInterface;
 
 class RecipieEditor extends AbstractController {
 
@@ -20,12 +15,12 @@ class RecipieEditor extends AbstractController {
 
     /**
      * @param Recipie $recipie
-     * @param Form $form
+     * @param FormInterface $form
      * @return void
      */
     public function prepareFormData(
         Recipie $recipie,
-        Form $form
+        FormInterface $form
     ): void
     {
         $recipie->setName($form->get('name')->getData());
@@ -37,16 +32,15 @@ class RecipieEditor extends AbstractController {
 
     /**
      * @param Recipie $recipie
-     * @param UploadedFile|null $photo
+     * @param FormInterface $form
      * @return bool
      */
-    public function edit(Recipie $recipie, ?UploadedFile $photo): bool
+    public function edit(Recipie $recipie, FormInterface $form): bool
     {
         $doctrineManager = $this->doctrine->getManager();
         $recipie->setUser($this->getUser());
-
-        $newFileName = $this->imageCreator->upload($photo);
-
+        $this->prepareFormData($recipie, $form);
+        $newFileName = $this->imageCreator->upload($form->get('photo')->getData());
         $recipie->setPhoto($newFileName);
 
         $doctrineManager->persist($recipie);

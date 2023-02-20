@@ -16,6 +16,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 class EditRecipieType extends AbstractType
 {
@@ -26,19 +28,39 @@ class EditRecipieType extends AbstractType
             ->add('name', TextType::class, [
                 'attr' => ['maxlength' => 255],
                 'constraints' => [
-                    new Length(['min' => 3])
+                    new NotBlank(),
+                    new Length(['min' => 3, 'max' => 255])
                 ]
             ])
-            ->add('description',TextareaType::class, ['attr' => ['maxlength' => 1000]])
+            ->add('description',TextareaType::class, [
+                'attr' => ['maxlength' => 1000],
+                'constraints' => [
+                    new Length(['max' => 1000])
+                ]
+            ])
             ->add('category', CollectionType::class, [
                 'data' => $options['data']->getCategory(),
                 'entry_type' => CategoryTextType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference'  => false,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['max' => 255])
+                ]
             ])
-            ->add('preparation',TextareaType::class, ['attr' => ['maxlength' => 10000]])
-            ->add('isVisible', CheckboxType::class)
+            ->add('preparation',TextareaType::class, [
+                'attr' => ['maxlength' => 10000],
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['max' => 10000])
+                ]
+            ])
+            ->add('isVisible', CheckboxType::class, [
+                'constraints' => [
+                    new Type('bool')
+                ]
+            ])
             ->add('photo', FileType::class, [
                 'mapped' => false,
                 'constraints' => [
@@ -57,18 +79,26 @@ class EditRecipieType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference'  => false,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['max' => 255])
+                ]
             ])
             ->add('ingredients', CollectionType::class, [
                 'data' => $options['data']->getIngredients(),
                 'entry_type' => IngredientType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'by_reference'  => false
+                'by_reference'  => false,
+                'constraints' => [
+                    new NotBlank(),
+                    new Length(['max' => 255])
+                ]
             ])
             ->add('save', SubmitType::class)
         ;
 
-        //todo ustyawić by domyślnie nie wyświetlało ingredients bo jest manualnie wyciągnięte w widoku
+        //todo zrobić ręczne ustawienie kolejności elementów formularza
     }
 
     public function configureOptions(OptionsResolver $resolver): void
