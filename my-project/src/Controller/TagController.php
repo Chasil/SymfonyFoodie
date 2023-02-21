@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Recipie;
 use App\Entity\Tag;
-use App\Repository\RecipieRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +27,7 @@ class TagController extends AbstractController
         $pagination = $paginator->paginate(
             $recipiesQuery,
             $request->query->getInt('page', $page),
-            5
+            $this->getParameter('app.per_page')
         );
 
         return $this->render('tag/index.html.twig', [

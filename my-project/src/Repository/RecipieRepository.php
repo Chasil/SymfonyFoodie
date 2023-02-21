@@ -41,6 +41,14 @@ class RecipieRepository extends ServiceEntityRepository
         }
     }
 
+    public function queryAll(): Query
+    {
+        return $this->createQueryBuilder('r')
+        ->select('r')
+            ->where('r.isVisible = 1')
+        ->getQuery();
+    }
+
     private function joinCategories(QueryBuilder $query, string $categoryName): QueryBuilder
     {
         return $query
