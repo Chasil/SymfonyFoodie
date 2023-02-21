@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Ingredient;
 use App\Entity\RecipieFieldCollection;
-use App\Form\Field\RecipieCollectionFieldType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
