@@ -7,14 +7,20 @@ use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
 use App\Entity\User;
+use App\Exception\ImageCreatorFailure;
 use App\Repository\CategoryRepository;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class RecipieCreator extends AbstractController {
 
-    public function __construct(private ManagerRegistry $doctrine, private ImageCreator $imageCreator)
+    public function __construct
+    (private ManagerRegistry $doctrine,
+     private ImageCreator $imageCreator,
+     private LoggerInterface $logger
+    )
     {
     }
 
@@ -87,7 +93,12 @@ class RecipieCreator extends AbstractController {
             $recipie->setUser($this->getUser());
         }
 
-        $newFileName = $this->imageCreator->create($recipie->getPhoto());
+        try {
+            $newFileName = $this->imageCreator->create($recipie->getPhoto());
+        } catch (ImageCreatorFailure $exception) {
+            $this->addFlash('error', $exception->getMessage());
+            $this->logger->log('ERROR', $exception->getMessage(), ['source' => $recipie->getPhoto()]);
+        }
 
         $recipie->setPhoto($newFileName);
 

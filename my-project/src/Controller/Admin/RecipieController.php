@@ -3,20 +3,22 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Recipie;
+use App\Exception\InvalidApiUrl;
+use App\Exception\RecipieNotExist;
 use App\Form\AddRecipieType;
 use App\Form\EditRecipieType;
 use App\Service\RecipieCreatorLauncher;
 use App\Service\RecipieEditor;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 class RecipieController extends AbstractController
 {
-    private const DOMAIN_NAME = 'themealdb.com';
-
     #[Route('/recipie', name: 'admin_recipie')]
     public function index(): Response
     {
@@ -28,16 +30,12 @@ class RecipieController extends AbstractController
     #[Route('/panel', name: 'add_recipie', methods: ['POST'])]
     public function saveRecipie(
         Request $request,
-        RecipieCreatorLauncher $launcher
+        RecipieCreatorLauncher $launcher,
+        LoggerInterface $logger
     ): Response {
         $form = $this->createForm(AddRecipieType::class);
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();
-
-        if (!str_contains($apiURL, self::DOMAIN_NAME)) {
-            $this->addFlash('error', 'Invalid URL domain.');
-            return $this->redirectToRoute('admin_panel');
-        }
 
         try {
             $launcher->launch(
@@ -49,11 +47,13 @@ class RecipieController extends AbstractController
                     $this->addFlash('error', 'Recipie already exist');
                 },
             );
-        } catch (\Exception $exception) {
-            $this->addFlash('error', 'Recipie does not exist');
+        } catch (InvalidApiUrl|RecipieNotExist $exception) {
+            $this->addFlash('error', $exception->getMessage());
+            $logger->log('ERROR', $exception->getMessage(), ['Requested URL' => $apiURL]);
+        } catch (ExceptionInterface $exception) {
+            $this->addFlash('error', 'Unknown error');
+            $logger->log('ERROR', $exception->getMessage());
         }
-
-        //todo stworzyć własne typy wyjątków
 
         return $this->redirectToRoute('admin_panel');
     }
@@ -61,7 +61,7 @@ class RecipieController extends AbstractController
     #[Route('/recipie/delete/{id}', name: 'delete_recipie', methods: ['GET'])]
     public function delete(Recipie $recipie, ManagerRegistry $doctrine)
     {
-        if ($this->getUser() == $recipie->getUser()) {
+        if ($this->getUser() === $recipie->getUser()) {
             $doctrine->getManager()->remove($recipie);
             $doctrine->getManager()->flush();
             $this->addFlash('deleted', 'Deleted successfully');

@@ -23,7 +23,13 @@ class RecipieCreatorLauncher
      * @param callable $callbackOnCreated
      * @param callable $callbackOnExisted
      * @return void
-     * @throws \Exception
+     * @throws \App\Exception\InvalidApiUrl
+     * @throws \App\Exception\RecipieNotExist
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
     public function launch(
         string $apiURL,
@@ -44,6 +50,5 @@ class RecipieCreatorLauncher
                 $callbackOnExisted();
             }
         }
-
     }
 }
