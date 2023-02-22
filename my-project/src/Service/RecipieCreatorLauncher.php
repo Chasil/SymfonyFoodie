@@ -22,32 +22,28 @@ class RecipieCreatorLauncher
      * @param string $apiURL
      * @param callable $callbackOnCreated
      * @param callable $callbackOnExisted
-     * @return mixed
+     * @return void
+     * @throws \Exception
      */
     public function launch(
         string $apiURL,
         callable $callbackOnCreated,
         callable $callbackOnExisted,
-    ): mixed {
+    ): void {
         $apiData = $this->apiClient->fetchTheMealDbInformation($apiURL);
+        $recipieCollection = $this->serializer->deserialize($apiData, RecipieCollection::class, 'json');
 
-        if (is_string($apiData)) {
-            $recipieCollection = $this->serializer->deserialize($apiData, RecipieCollection::class, 'json');
-
-            foreach ($recipieCollection->getMeals() as $serializedRecipie) {
-                if (!$this->doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
-                    $this->recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
-                    $this->recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
-                    $this->recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
-                    $this->recipieCreator->create($serializedRecipie->getRecipie());
-                    $callbackOnCreated();
-                } else {
-                    $callbackOnExisted();
-                }
+        foreach ($recipieCollection->getMeals() as $serializedRecipie) {
+            if (!$this->doctrine->getRepository(Recipie::class)->findBy(['recipieId' => $serializedRecipie->getRecipieId()])) {
+                $this->recipieCreator->prepareIngredients($serializedRecipie->getRecipie(), $serializedRecipie->getIngredients());
+                $this->recipieCreator->prepareCategories($serializedRecipie->getRecipie(), $serializedRecipie->getCategory());
+                $this->recipieCreator->prepareTags($serializedRecipie->getRecipie(), $serializedRecipie->getTag());
+                $this->recipieCreator->create($serializedRecipie->getRecipie());
+                $callbackOnCreated();
+            } else {
+                $callbackOnExisted();
             }
-            return true;
-        } else {
-            return $apiData;
         }
+
     }
 }

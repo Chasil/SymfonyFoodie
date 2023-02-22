@@ -13,7 +13,7 @@ class ApiClient
         $this->client = $client;
     }
 
-    public function fetchTheMealDbInformation(string $apiURL): mixed
+    public function fetchTheMealDbInformation(string $apiURL): string
     {
         $response = $this->client->request(
             'GET',
@@ -21,7 +21,7 @@ class ApiClient
         );
 
         if (!$this->apiManager->doesRecipieExist($response->toArray())) {
-            return false;
+            throw new \Exception();
         }
 
         return $response->getContent();

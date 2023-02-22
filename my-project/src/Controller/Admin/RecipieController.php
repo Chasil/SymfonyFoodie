@@ -34,9 +34,13 @@ class RecipieController extends AbstractController
         $form->handleRequest($request);
         $apiURL = $form->get('meal_link')->getData();
 
-        //todo zobaczyć czy jakoś lepiej się tego fragmentu nie da zrobić
-        if (str_contains($apiURL, self::DOMAIN_NAME)) {
-            $apiResult = $launcher->launch(
+        if (!str_contains($apiURL, self::DOMAIN_NAME)) {
+            $this->addFlash('error', 'Invalid URL domain.');
+            return $this->redirectToRoute('admin_panel');
+        }
+
+        try {
+            $launcher->launch(
                 $apiURL,
                 function() {
                     $this->addFlash('notice', 'Recipie created');
@@ -45,12 +49,11 @@ class RecipieController extends AbstractController
                     $this->addFlash('error', 'Recipie already exist');
                 },
             );
-            if (!$apiResult) {
-                $this->addFlash('error', 'Recipie does not exist');
-            }
-        } else {
-            $this->addFlash('error', 'Invalid URL domain.');
+        } catch (\Exception $exception) {
+            $this->addFlash('error', 'Recipie does not exist');
         }
+
+        //todo stworzyć własne typy wyjątków
 
         return $this->redirectToRoute('admin_panel');
     }
