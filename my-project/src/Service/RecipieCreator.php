@@ -95,12 +95,11 @@ class RecipieCreator extends AbstractController {
 
         try {
             $newFileName = $this->imageCreator->create($recipie->getPhoto());
+            $recipie->setPhoto($newFileName);
         } catch (ImageCreatorFailure $exception) {
             $this->addFlash('error', $exception->getMessage());
             $this->logger->log('ERROR', $exception->getMessage(), ['source' => $recipie->getPhoto()]);
         }
-
-        $recipie->setPhoto($newFileName);
 
         $doctrineManager->persist($recipie);
         $doctrineManager->flush();

@@ -86,6 +86,12 @@
             </div>
         {% endfor %}
 
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         {{ form_start(editRecipie) }}
 
         <div class="row js-ingredients-wrapper"
