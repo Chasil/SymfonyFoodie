@@ -15,8 +15,7 @@ class RecipieController extends AbstractController
         return $this->render('recipie/recipie.html.twig', [
             'recipie' => $recipie,
             'tags' => $recipie->getTags(),
-            'ingredients' => $recipie->getIngredients()
+            'ingredients' => $recipie->getIngredients(),
         ]);
     }
-
 }

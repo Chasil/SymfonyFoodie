@@ -92,7 +92,7 @@ class Recipie
     {
         return array_map(
             'trim',
-            explode(",", $data)
+            explode(',', $data)
         );
     }
 }

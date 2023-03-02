@@ -2,23 +2,19 @@
 
 namespace App\Command;
 
-use App\Exception\InvalidApiUrl;
-use App\Exception\RecipieNotExist;
+use App\Exception\GetApiRecipiesException;
 use App\Service\RecipieCreatorLauncher;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-#[AsCommand(name: 'app:get-api-recipies')]
-class GetApiRecipies extends Command
+abstract class GetApiRecipies extends Command
 {
     private const API_LINK = 'https://www.themealdb.com/api/json/v1/1/search.php?f=';
 
@@ -30,44 +26,21 @@ class GetApiRecipies extends Command
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return string
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
-    protected function getLetter(
-        InputInterface $input,
-        OutputInterface $output,
-    ): string
-    {
-        $io = new SymfonyStyle($input, $output);
-
-        return (string) $io->ask(
-            'Type single letter to get recipies starting with this letters.',
-            1,
-            function ($letter) {
-                if (!preg_match('/^[a-z]$/', $letter)) {
-                    throw new \RuntimeException('Value must be a single letter!');
-                }
-                return $letter;
-            }
-        );
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
-     */
-    protected function execute(
+    final protected function execute(
         InputInterface $input,
         OutputInterface $output,
     ): int {
-
-        $letter = $this->getLetter($input, $output);
-
         try {
+            $letter = $this->getLetter($input, $output);
+
             $this->launcher->launch(
-                self::API_LINK . $letter,
+                self::API_LINK.$letter,
                 function () use ($output) {
                     $output->writeln('Recipie added.');
                 },
@@ -75,18 +48,22 @@ class GetApiRecipies extends Command
                     $output->writeln('Recipie already exist.');
                 },
             );
-        } catch (
-            RedirectionExceptionInterface|
-            DecodingExceptionInterface|
-            ClientExceptionInterface|
-            InvalidApiUrl|
-            TransportExceptionInterface|
-            ServerExceptionInterface|
-            RecipieNotExist $exception
-        ) {
+        } catch (GetApiRecipiesException) {
+            return Command::INVALID;
+        } catch (\Exception $exception) {
             $this->logger->log('ERROR', $exception->getMessage(), ['Cron error' => $exception->getMessage()]);
+
+            return Command::FAILURE;
         }
 
         return Command::SUCCESS;
     }
+
+    /**
+     * @throws GetApiRecipiesException
+     */
+    abstract protected function getLetter(
+        InputInterface $input,
+        OutputInterface $output,
+    ): string;
 }

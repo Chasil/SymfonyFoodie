@@ -40,10 +40,10 @@ class RecipieController extends AbstractController
         try {
             $launcher->launch(
                 $apiURL,
-                function() {
+                function () {
                     $this->addFlash('notice', 'Recipie created');
                 },
-                function() {
+                function () {
                     $this->addFlash('error', 'Recipie already exist');
                 },
             );
@@ -77,8 +77,7 @@ class RecipieController extends AbstractController
         Recipie $recipie,
         Request $request,
         RecipieEditor $recipieEditor
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(EditRecipieType::class, $recipie);
         $form->handleRequest($request);
 
@@ -90,9 +89,7 @@ class RecipieController extends AbstractController
         }
 
         return $this->render('recipie/edit.html.twig', [
-            'editRecipie' => $form->createView()
+            'editRecipie' => $form->createView(),
         ]);
-
-
     }
 }

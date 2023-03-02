@@ -36,6 +36,7 @@ abstract class RecipieCollectionFieldRepository extends ServiceEntityRepository
     {
         $entity = $this->findOneBy(['id' => $id]);
         $this->getEntityManager()->remove($entity);
+
         return $entity;
     }
 }

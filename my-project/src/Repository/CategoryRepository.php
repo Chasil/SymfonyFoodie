@@ -41,10 +41,6 @@ class CategoryRepository extends RecipieCollectionFieldRepository
         }
     }
 
-    /**
-     * @param string $name
-     * @return mixed
-     */
     public function getCategoryByName(string $name): mixed
     {
         $category = $this->findOneBy(['name' => $name]);
@@ -54,13 +50,12 @@ class CategoryRepository extends RecipieCollectionFieldRepository
             $category->setName($name);
             $this->getEntityManager()->persist($category);
         }
+
         return $category;
     }
 
-    /**
-     * @return array
-     */
-    public function findGroupedCategories(): array {
+    public function findGroupedCategories(): array
+    {
         return $this->createQueryBuilder('c')
             ->select('c.name')
             ->addSelect('count(c.name) as amount')

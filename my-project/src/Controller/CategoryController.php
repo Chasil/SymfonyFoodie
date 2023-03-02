@@ -32,7 +32,7 @@ class CategoryController extends AbstractController
 
         return $this->render('category/index.html.twig', [
             'recipiesPagination' => $pagination,
-            'category' => $category
+            'category' => $category,
         ]);
     }
 }

@@ -23,7 +23,7 @@ class SearchController extends AbstractController
 
         return $this->render('search/index.html.twig', [
             'recipies' => $recipies,
-            'searched_value' => $searchedValue
+            'searched_value' => $searchedValue,
         ]);
     }
 }

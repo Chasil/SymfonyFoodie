@@ -33,7 +33,7 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig', [
             'recipiesPagination' => $pagination,
             'categories' => $doctrine->getRepository(Category::class)->findGroupedCategories(),
-            'tags' => $doctrine->getRepository(Tag::class)->findAll()
+            'tags' => $doctrine->getRepository(Tag::class)->findAll(),
         ]);
     }
 }

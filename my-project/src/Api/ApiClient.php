@@ -15,8 +15,6 @@ class ApiClient
     }
 
     /**
-     * @param string $apiURL
-     * @return string
      * @throws InvalidApiUrl
      * @throws RecipieNotExist
      * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface

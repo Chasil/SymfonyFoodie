@@ -32,7 +32,7 @@ class TagController extends AbstractController
 
         return $this->render('tag/index.html.twig', [
             'recipiesPagination' => $pagination,
-            'tag' => $tag
+            'tag' => $tag,
         ]);
     }
 }

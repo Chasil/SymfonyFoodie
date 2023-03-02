@@ -42,11 +42,6 @@ class TagRepository extends RecipieCollectionFieldRepository
         }
     }
 
-    /**
-     * @param string $name
-     * @param Recipie $recipie
-     * @return void
-     */
     public function addTag(string $name, Recipie $recipie): void
     {
         $tag = $this->getEntityManager()->getRepository(Tag::class)->findOneBy(['name' => $name]);
@@ -59,10 +54,6 @@ class TagRepository extends RecipieCollectionFieldRepository
         $this->getEntityManager()->persist($tag);
     }
 
-    /**
-     * @param string $name
-     * @return Tag
-     */
     public function getTagByName(string $name): Tag
     {
         $tag = $this->findOneBy(['name' => $name]);
@@ -72,6 +63,7 @@ class TagRepository extends RecipieCollectionFieldRepository
             $tag->setName($name);
             $this->getEntityManager()->persist($tag);
         }
+
         return $tag;
     }
 

@@ -14,26 +14,22 @@ use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class RecipieCreator extends AbstractController {
-
-    public function __construct
-    (private ManagerRegistry $doctrine,
+class RecipieCreator extends AbstractController
+{
+    public function __construct(private ManagerRegistry $doctrine,
      private ImageCreator $imageCreator,
      private LoggerInterface $logger
-    )
-    {
+    ) {
     }
 
     /**
-     * @param Recipie $recipie
      * @param array<TKey, array{name: string, measure: string}> $ingredients
-     * @return void
      */
     public function prepareIngredients(Recipie $recipie, array $ingredients): void
     {
         $doctrineManager = $this->doctrine->getManager();
 
-        foreach($ingredients as $ingredient) {
+        foreach ($ingredients as $ingredient) {
             if (!empty($ingredient['name'] || !empty($ingredient['measure']))) {
                 /** @var IngredientRepository $ingredientRepository */
                 $ingredientRepository = $doctrineManager->getRepository(Ingredient::class);
@@ -44,15 +40,12 @@ class RecipieCreator extends AbstractController {
     }
 
     /**
-     * @param Recipie $recipie
      * @param array $tags
-     * @return void
      */
     public function prepareTags(
         Recipie $recipie,
         ?array $tags
-    ): void
-    {
+    ): void {
         if ($tags) {
             foreach ($tags as $tag) {
                 if (!empty($tag)) {
@@ -65,11 +58,6 @@ class RecipieCreator extends AbstractController {
         }
     }
 
-    /**
-     * @param Recipie $recipie
-     * @param string $categoryName
-     * @return void
-     */
     public function prepareCategories(Recipie $recipie, string $categoryName): void
     {
         /** @var CategoryRepository $categoryRepository */
@@ -79,7 +67,6 @@ class RecipieCreator extends AbstractController {
     }
 
     /**
-     * @param Recipie $recipie
      * @return bool
      */
     public function create(Recipie $recipie): void

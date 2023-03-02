@@ -9,26 +9,19 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 
-class RecipieEditor extends AbstractController {
-
+class RecipieEditor extends AbstractController
+{
     public function __construct(
         private ManagerRegistry $doctrine,
         private ImageCreator $imageCreator,
         private LoggerInterface $logger
-    )
-    {
+    ) {
     }
 
-    /**
-     * @param Recipie $recipie
-     * @param FormInterface $form
-     * @return void
-     */
     public function prepareFormData(
         Recipie $recipie,
         FormInterface $form
-    ): void
-    {
+    ): void {
         $recipie->setName($form->get('name')->getData());
         $recipie->setDescription($form->get('description')->getData());
         $recipie->setPreparation($form->get('preparation')->getData());
@@ -36,11 +29,6 @@ class RecipieEditor extends AbstractController {
         $recipie->setUser($this->getUser());
     }
 
-    /**
-     * @param Recipie $recipie
-     * @param FormInterface $form
-     * @return bool
-     */
     public function edit(
         Recipie $recipie,
         FormInterface $form): bool

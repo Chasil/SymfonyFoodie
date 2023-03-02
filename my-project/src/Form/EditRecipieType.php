@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Form;
 
 use App\Entity\Recipie;
 use App\Form\Field\CategoryTextType;
-use App\Form\Field\TagTextType;
 use App\Form\Field\IngredientType;
+use App\Form\Field\TagTextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -23,43 +24,43 @@ class EditRecipieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        //todo czemu category a nie categories? jak zmienię to mam błąd
+        // todo czemu category a nie categories? jak zmienię to mam błąd
         $builder
             ->add('name', TextType::class, [
                 'attr' => ['maxlength' => 255],
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['min' => 3, 'max' => 255])
-                ]
+                    new Length(['min' => 3, 'max' => 255]),
+                ],
             ])
-            ->add('description',TextareaType::class, [
+            ->add('description', TextareaType::class, [
                 'attr' => ['maxlength' => 1000],
                 'constraints' => [
-                    new Length(['max' => 1000])
-                ]
+                    new Length(['max' => 1000]),
+                ],
             ])
             ->add('category', CollectionType::class, [
                 'data' => $options['data']->getCategory(),
                 'entry_type' => CategoryTextType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'by_reference'  => false,
+                'by_reference' => false,
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['max' => 255])
-                ]
+                    new Length(['max' => 255]),
+                ],
             ])
-            ->add('preparation',TextareaType::class, [
+            ->add('preparation', TextareaType::class, [
                 'attr' => ['maxlength' => 10000],
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['max' => 10000])
-                ]
+                    new Length(['max' => 10000]),
+                ],
             ])
             ->add('isVisible', CheckboxType::class, [
                 'constraints' => [
-                    new Type('bool')
-                ]
+                    new Type('bool'),
+                ],
             ])
             ->add('photo', FileType::class, [
                 'mapped' => false,
@@ -67,38 +68,38 @@ class EditRecipieType extends AbstractType
                     new File([
                         'maxSize' => '2M',
                         'mimeTypes' => [
-                            'image/*'
+                            'image/*',
                         ],
-                        'mimeTypesMessage' => 'File must be an image'
-                    ])
-                ]
+                        'mimeTypesMessage' => 'File must be an image',
+                    ]),
+                ],
             ])
             ->add('tags', CollectionType::class, [
                 'data' => $options['data']->getTags(),
                 'entry_type' => TagTextType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'by_reference'  => false,
+                'by_reference' => false,
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['max' => 255])
-                ]
+                    new Length(['max' => 255]),
+                ],
             ])
             ->add('ingredients', CollectionType::class, [
                 'data' => $options['data']->getIngredients(),
                 'entry_type' => IngredientType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
-                'by_reference'  => false,
+                'by_reference' => false,
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['max' => 255])
-                ]
+                    new Length(['max' => 255]),
+                ],
             ])
             ->add('save', SubmitType::class)
         ;
 
-        //todo zrobić ręczne ustawienie kolejności elementów formularza
+        // todo zrobić ręczne ustawienie kolejności elementów formularza
     }
 
     public function configureOptions(OptionsResolver $resolver): void

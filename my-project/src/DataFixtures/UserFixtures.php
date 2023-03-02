@@ -11,7 +11,8 @@ class UserFixtures extends Fixture
 {
     private UserPasswordHasherInterface $hasher;
 
-    public function __construct(UserPasswordHasherInterface $hasher) {
+    public function __construct(UserPasswordHasherInterface $hasher)
+    {
         $this->hasher = $hasher;
     }
 

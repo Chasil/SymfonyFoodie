@@ -20,7 +20,7 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('username')
-            ->add('email', EmailType::class,)
+            ->add('email', EmailType::class)
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
@@ -46,10 +46,10 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
                 'required' => true,
-                'first_options'  => ['label' => 'Password'],
+                'first_options' => ['label' => 'Password'],
                 'second_options' => ['label' => 'Repeat Password'],
                 'type' => PasswordType::class,
-                'invalid_message' => 'Password fields must match'
+                'invalid_message' => 'Password fields must match',
             ])
         ;
     }

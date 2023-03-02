@@ -19,10 +19,6 @@ class RecipieCreatorLauncher
     }
 
     /**
-     * @param string $apiURL
-     * @param callable $callbackOnCreated
-     * @param callable $callbackOnExisted
-     * @return void
      * @throws \App\Exception\InvalidApiUrl
      * @throws \App\Exception\RecipieNotExist
      * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface

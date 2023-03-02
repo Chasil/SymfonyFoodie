@@ -52,6 +52,7 @@ class IngredientRepository extends RecipieCollectionFieldRepository
             $ingredient->setMeasure($measure);
             $this->getEntityManager()->persist($ingredient);
         }
+
         return $ingredient;
     }
 
@@ -64,5 +65,4 @@ class IngredientRepository extends RecipieCollectionFieldRepository
 
         return $entity;
     }
-
 }

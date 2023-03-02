@@ -11,6 +11,7 @@ use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 
 abstract class RecipieCollectionFieldType extends AbstractType implements DataMapperInterface
 {
@@ -26,7 +27,7 @@ abstract class RecipieCollectionFieldType extends AbstractType implements DataMa
 
     public function mapDataToForms(mixed $viewData, \Traversable $forms)
     {
-        if ($viewData === null) {
+        if (null === $viewData) {
             return;
         }
 

@@ -57,7 +57,7 @@ class RecipieRepository extends ServiceEntityRepository
             ->setParameter(1, $categoryName);
     }
 
-    public function getByCategoryName(string $categoryName,  int $perPage = null, int $offset = null): array
+    public function getByCategoryName(string $categoryName, int $perPage = null, int $offset = null): array
     {
         return $this->joinCategories(
             $this->createQueryBuilder('r')
@@ -87,7 +87,7 @@ class RecipieRepository extends ServiceEntityRepository
             ->setParameter(1, $tagName);
     }
 
-    public function getByTagName(string $tagName,  int $perPage = null, int $offset = null): array
+    public function getByTagName(string $tagName, int $perPage = null, int $offset = null): array
     {
         return $this->joinTags(
             $this->createQueryBuilder('r')

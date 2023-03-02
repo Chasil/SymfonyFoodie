@@ -18,7 +18,7 @@ class PanelController extends AbstractController
 
         return $this->render('admin_panel/index.html.twig', [
             'add_recipie_form' => $form->createView(),
-            'meals' => $doctrine->getManager()->getRepository(Recipie::class)->findAll()
+            'meals' => $doctrine->getManager()->getRepository(Recipie::class)->findAll(),
         ]);
     }
 }
