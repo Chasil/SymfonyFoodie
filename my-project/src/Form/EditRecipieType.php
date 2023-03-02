@@ -98,8 +98,6 @@ class EditRecipieType extends AbstractType
             ])
             ->add('save', SubmitType::class)
         ;
-
-        // todo zrobić ręczne ustawienie kolejności elementów formularza
     }
 
     public function configureOptions(OptionsResolver $resolver): void

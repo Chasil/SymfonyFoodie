@@ -30,6 +30,8 @@ class IndexController extends AbstractController
             $this->getParameter('app.per_page')
         );
 
+        //TODO nie działa zliczanie kategorii
+        //TODO latest reciepies
         return $this->render('index/index.html.twig', [
             'recipiesPagination' => $pagination,
             'categories' => $doctrine->getRepository(Category::class)->findGroupedCategories(),

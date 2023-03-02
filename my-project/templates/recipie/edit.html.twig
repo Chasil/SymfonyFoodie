@@ -4,71 +4,22 @@
     {{ parent() }}
     <script>
         jQuery(document).ready(function() {
-            var $ingredientWrapper = $('.js-ingredients-wrapper');
-            $ingredientWrapper.on('click', '.js-remove-ingredient', function(e) {
+            $('.js-remove-item').on('click', function(e) {
                 e.preventDefault();
-                $(this).closest('.js-ingredients-item')
+                $(this).closest('.js-item-container')
                     .fadeOut()
                     .remove();
             });
-            $ingredientWrapper.on('click', '.js-ingredient-add', function(e) {
+            $('.js-add-item').on('click', function(e) {
+                var itemWrapper = $(this).closest('.js-item-wrapper');
                 e.preventDefault();
-                // Get the data-prototype explained earlier
-                var prototype = $ingredientWrapper.data('prototype');
-                // get the new index
-                var index = $ingredientWrapper.data('index');
-                // Replace '__name__' in the prototype's HTML to
-                // instead be a number based on how many items we have
+                var prototype = itemWrapper.data('prototype');
+                var index = itemWrapper.data('index');
                 var newForm = prototype.replace(/__name__/g, index);
-                // increase the index with one for the next item
-                $ingredientWrapper.data('index', index + 1);
-                // Display the form in the page before the "new" link
+                itemWrapper.data('index', index + 1);
                 $(this).before(newForm);
             });
 
-            var $tagWrapper = $('.js-tags-wrapper');
-            $tagWrapper.on('click', '.js-remove-tag', function(e) {
-                e.preventDefault();
-                $(this).closest('.js-tags-item')
-                    .fadeOut()
-                    .remove();
-            });
-            $tagWrapper.on('click', '.js-tag-add', function(e) {
-                e.preventDefault();
-                // Get the data-prototype explained earlier
-                var prototype = $tagWrapper.data('prototype');
-                // get the new index
-                var index = $tagWrapper.data('index');
-                // Replace '__name__' in the prototype's HTML to
-                // instead be a number based on how many items we have
-                var newForm = prototype.replace(/__name__/g, index);
-                // increase the index with one for the next item
-                $tagWrapper.data('index', index + 1);
-                // Display the form in the page before the "new" link
-                $(this).before(newForm);
-            });
-
-            var $categoryWrapper = $('.js-categories-wrapper');
-            $categoryWrapper.on('click', '.js-remove-category', function(e) {
-                e.preventDefault();
-                $(this).closest('.js-categories-item')
-                    .fadeOut()
-                    .remove();
-            });
-            $categoryWrapper.on('click', '.js-category-add', function(e) {
-                e.preventDefault();
-                // Get the data-prototype explained earlier
-                var prototype = $categoryWrapper.data('prototype');
-                // get the new index
-                var index = $categoryWrapper.data('index');
-                // Replace '__name__' in the prototype's HTML to
-                // instead be a number based on how many items we have
-                var newForm = prototype.replace(/__name__/g, index);
-                // increase the index with one for the next item
-                $categoryWrapper.data('index', index + 1);
-                // Display the form in the page before the "new" link
-                $(this).before(newForm);
-            });
         });
     </script>
 {% endblock %}
@@ -94,13 +45,19 @@
 
         {{ form_start(editRecipie) }}
 
-        <div class="row js-ingredients-wrapper"
+        {{ form_row(editRecipie.name) }}
+        {{ form_row(editRecipie.description) }}
+        {{ form_row(editRecipie.preparation) }}
+        {{ form_row(editRecipie.isVisible) }}
+        {{ form_row(editRecipie.photo) }}
+
+        <div class="row js-item-wrapper"
              data-prototype="{{ form_widget(editRecipie.ingredients.vars.prototype)|e('html_attr') }}"
              data-index="{{ editRecipie.ingredients|length }}"
         >
             {% for ingredient in editRecipie.ingredients %}
-                <div class="col-xs-4 js-ingredients-item">
-                    <a href="#" class="js-remove-ingredient pull-right">
+                <div class="col-xs-4 js-item-container">
+                    <a href="#" class="js-remove-item pull-right">
                         <span class="fa fa-close"></span>
                     </a>
                     {{ form_errors(ingredient) }}
@@ -108,45 +65,45 @@
                     {{ form_row(ingredient.measure) }}
                 </div>
             {% endfor %}
-            <a href="#" class="js-ingredient-add">
+            <a href="#" class="js-add-item">
                 <span class="fa fa-plus-circle"></span>
                 Add Another Ingredient
             </a>
         </div>
 
-        <div class="row js-tags-wrapper"
+        <div class="row js-item-wrapper"
              data-prototype="{{ form_widget(editRecipie.tags.vars.prototype)|e('html_attr') }}"
              data-index="{{ editRecipie.tags|length }}"
         >
             {% for tag in editRecipie.tags %}
-                <div class="col-xs-4 js-tags-item">
-                    <a href="#" class="js-remove-tag pull-right">
+                <div class="col-xs-4 js-item-container">
+                    <a href="#" class="js-remove-item pull-right">
                         <span class="fa fa-close"></span>
                     </a>
                     {{ form_errors(tag) }}
                     {{ form_row(tag) }}
                 </div>
             {% endfor %}
-            <a href="#" class="js-tag-add">
+            <a href="#" class="js-add-item">
                 <span class="fa fa-plus-circle"></span>
                 Add Another Tag
             </a>
         </div>
 
-        <div class="row js-categories-wrapper"
+        <div class="row js-item-wrapper"
              data-prototype="{{ form_widget(editRecipie.category.vars.prototype)|e('html_attr') }}"
              data-index="{{ editRecipie.category|length }}"
         >
             {% for category in editRecipie.category %}
-                <div class="col-xs-4 js-categories-item">
-                    <a href="#" class="js-remove-category pull-right">
+                <div class="col-xs-4 js-item-container">
+                    <a href="#" class="js-remove-item pull-right">
                         <span class="fa fa-close"></span>
                     </a>
                     {{ form_errors(category) }}
                     {{ form_row(category) }}
                 </div>
             {% endfor %}
-            <a href="#" class="js-category-add">
+            <a href="#" class="js-add-item">
                 <span class="fa fa-plus-circle"></span>
                 Add Another Category
             </a>
