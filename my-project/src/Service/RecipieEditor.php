@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Recipie;
-use App\Exception\ImageUploadFailure;
+use App\Exception\ImageUploadFailureException;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,7 +40,7 @@ class RecipieEditor extends AbstractController
         try {
             $newFileName = $this->imageCreator->upload($form->get('photo')->getData());
             $recipie->setPhoto($newFileName);
-        } catch (ImageUploadFailure $exception) {
+        } catch (ImageUploadFailureException $exception) {
             $this->addFlash('error', $exception->getMessage());
             $this->logger->log('ERROR', $exception);
         }

@@ -7,7 +7,7 @@ use App\Entity\Ingredient;
 use App\Entity\Recipie;
 use App\Entity\Tag;
 use App\Entity\User;
-use App\Exception\ImageCreatorFailure;
+use App\Exception\ImageCreatorFailureException;
 use App\Repository\CategoryRepository;
 use App\Repository\TagRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -83,7 +83,7 @@ class RecipieCreator extends AbstractController
         try {
             $newFileName = $this->imageCreator->create($recipie->getPhoto());
             $recipie->setPhoto($newFileName);
-        } catch (ImageCreatorFailure $exception) {
+        } catch (ImageCreatorFailureException $exception) {
             $this->addFlash('error', $exception->getMessage());
             $this->logger->log('ERROR', $exception->getMessage(), ['source' => $recipie->getPhoto()]);
         }

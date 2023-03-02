@@ -2,8 +2,8 @@
 
 namespace App\Api;
 
-use App\Exception\InvalidApiUrl;
-use App\Exception\RecipieNotExist;
+use App\Exception\InvalidApiUrlException;
+use App\Exception\RecipieNotExistException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ApiClient
@@ -15,8 +15,8 @@ class ApiClient
     }
 
     /**
-     * @throws InvalidApiUrl
-     * @throws RecipieNotExist
+     * @throws InvalidApiUrlException
+     * @throws RecipieNotExistException
      * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
@@ -26,7 +26,7 @@ class ApiClient
     public function fetchTheMealDbInformation(string $apiURL): string
     {
         if (!$this->isURLValid($apiURL)) {
-            throw new InvalidApiUrl();
+            throw new InvalidApiUrlException();
         }
 
         $response = $this->client->request(
@@ -35,7 +35,7 @@ class ApiClient
         );
 
         if (!$this->doesRecipieExist($response->toArray())) {
-            throw new RecipieNotExist();
+            throw new RecipieNotExistException();
         }
 
         return $response->getContent();

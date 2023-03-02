@@ -42,7 +42,7 @@ Celem projektu rozgrzewkowego jest spokojne rozpoczęcie współpracy i wdrożen
 * https://www.themealdb.com/api/json/v1/1/search.php?s=Burek
 * https://www.themealdb.com/api/json/v1/1/search.php?s=Flamiche
 
-### Pobieranie danych z API z CLI ###
+### Pobieranie danych z API z CLI #1 ###
 * Funkcjonalność pozwala na pobranie wszystkich przepisów, których nie posiadamy, z danej litery alfabetu na raz:
 
 ```
@@ -50,3 +50,13 @@ php bin/console api:get-api-recipies
 ```
 
 * po odpaleniu funkcja poprosi o podanie litery, po której zaciągnie przepisy z podsumowaniem o ilości pobrany
+
+### Pobieranie danych z API z CLI #2 ###
+* Funkcjonalność pozwala na pobranie wszystkich przepisów, których nie posiadamy poprzez odpalenie skyptu np. w cron:
+
+```
+php bin/console app:get-next-letter-api-recipies
+```
+
+* crona można odpalić by działał np. co 1 minutę w określonym czasie. Po aktualizacji przepisów jednej litery
+* zapisuje w cache kolejną i zaciąga w kolejnym odpaleniu crona kolejne przepisy do końca alfabetu

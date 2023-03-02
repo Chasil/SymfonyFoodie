@@ -2,7 +2,7 @@
 
 namespace App\Exception;
 
-class RecipieNotExist extends \Exception
+class RecipieNotExistException extends \Exception
 {
     public function __construct(string $message = 'Recipie does not exist.', int $code = 0, ?\Throwable $previous = null)
     {

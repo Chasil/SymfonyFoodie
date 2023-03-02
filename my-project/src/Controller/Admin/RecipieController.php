@@ -3,8 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Recipie;
-use App\Exception\InvalidApiUrl;
-use App\Exception\RecipieNotExist;
+use App\Exception\InvalidApiUrlException;
+use App\Exception\RecipieNotExistException;
 use App\Form\AddRecipieType;
 use App\Form\EditRecipieType;
 use App\Service\RecipieCreatorLauncher;
@@ -47,7 +47,7 @@ class RecipieController extends AbstractController
                     $this->addFlash('error', 'Recipie already exist');
                 },
             );
-        } catch (InvalidApiUrl|RecipieNotExist $exception) {
+        } catch (InvalidApiUrlException|RecipieNotExistException $exception) {
             $this->addFlash('error', $exception->getMessage());
             $logger->log('ERROR', $exception->getMessage(), ['Requested URL' => $apiURL]);
         } catch (ExceptionInterface $exception) {

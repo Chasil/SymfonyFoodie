@@ -19,8 +19,8 @@ class RecipieCreatorLauncher
     }
 
     /**
-     * @throws \App\Exception\InvalidApiUrl
-     * @throws \App\Exception\RecipieNotExist
+     * @throws \App\Exception\InvalidApiUrlException
+     * @throws \App\Exception\RecipieNotExistException
      * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface
      * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
